@@ -6,8 +6,6 @@ public class Main {
         Main main = new Main();
         
         main.iniciar();
-        
-        
     }
     
     private void iniciar() {
