@@ -1,0 +1,8 @@
+1. Mostrar al usuario en pantalla las opciones:
+  - 1. Adivina Anagramas
+  - 2. Tic Tac Toe
+  - 3. Sudoku
+  - 4. Reportes
+  - 5. Salir
+2. Solicitarle la opción que quiere e indicarle que solo puede ingresar un número de 1 a 5.
+3. Redirigirlo al módulo que seleccionó.

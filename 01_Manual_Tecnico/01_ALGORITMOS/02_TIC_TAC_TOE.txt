@@ -1,0 +1,39 @@
+1. Crear el tablero 3x3 y con casillas con identificadores.
+2. Mostrarle al usuario el tablero.
+3. Solicitarle al usuario la casilla en la que desea colocar su ficha.
+4. Si la entrada es el comando para regresar al menú:
+  - Incrementar el acumulador de partida abandonada.
+  - Eliminar el progreso de estadísticas.
+  - Retornar al menú principal.
+5. Validar si la casilla que seleccionó el usuario está disponible.
+6. Si la casilla no existe o no está libre:
+  - No registrar como turno.
+  - Pedirle nuevamente al usuario la casilla en la que desea colocar su ficha.
+7. Colocar la ficha del usuario en la casilla que seleccionó.
+8. Inicializar los turnos de la computadora en 1 e incrimentar cada que termine su turno.
+9. Tras cada turno, ya sea de la computadora o del usario, verificar si existe ganador o empate.
+10. Si es el turno 1 de la computadora:
+  - Si la casilla central está vacía:
+      + Colocar la ficha de la computadora en dicha casilla.
+  - Si la casilla central no está vacía:
+      + Colocar la ficha de la computadora en una esquina aleatoria.
+11. Solicitarle al usuario la casilla en la que desea colocar su ficha.
+10. Si es el turno 2 de la computadora:
+  - Si el usuario tiene 2 fichas alineadas con 1 casilla vacía junta:
+      + Colocar la ficha de la computadora en esa casilla vacía para bloquear.
+  - Si la computadora tiene su ficha en la casilla central:
+      + Colocar la ficha de la computadora en una casilla de esquina adyacente que sea de al menos una línea diagonal donde no esté la ficha del usuario.
+  - Si la computadora tiene su ficha en una casilla de esquina:
+      + Colocar la ficha de la computadora en una casilla de esquina adyacente a esa ficha de forma aleatoria.
+11. Solicitarle al usuario la casilla en la que desea colocar su ficha.
+12. Si es el turno 3 o 4 de la computadora:
+  - Si la computadora tiene 2 fichas en una línea con una casilla vacía:
+      + Colocar la ficha en esa casilla vacía para que la computadora gane.
+  - Si el usuario tiene 2 fichas alineadas con 1 casilla vacía junta:
+      + Colocar la ficha de la computadora en esa casilla vacía para bloquear.
+  - Si no tiene posibilidad de ganar o de bloquear:
+      + Colocar la ficha de la computadora en una casilla vacía aleatoria de una línea donde esté una casilla con una ficha de la computadora y que no tenga ninguna casilla con una ficha del usuario. Si no, colocar la ficha de la computadora en una casilla vacía aleatoria.
+13. Si el usuario hizo 3 en línea (3 en raya :p):
+  - Registrar victoria del usuario y datos para los reportes
+14. Si la computadora hizo 3 en línea:
+  - Registrar victoria de la computadora y datos para los reportes.

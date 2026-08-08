@@ -1,0 +1,31 @@
+1. Obtener una palabra del banco de palabras.
+2. Convertir la palabra en un arreglo de caracteres.
+3. Desordenar las posiciones del arreglo de forma aleatoria.
+4. Iterar el banco de palabras guardando en otro arreglo las palabras con el mismo tamaño.
+5. Iterar el nuevo banco para calcular los anagramas correctos.
+6. Calcular el límite de intentos permitidos.
+7. Mostrarle la palabra desordenada al usuario.
+8. Si el usuario todavía tiene intentos permitidos y le falta adivinar anagramas:
+  - Mostrarle la palabra desordenada.
+  - Mostrarle los intentos anteriores. De color verde si fue un intento acertado o de color rojo si fue un intento fallido.
+  - Mostrarle una lista de palabras incógnitas de los anagramas que tiene que adivinar.
+  - Solicitarle el intento al usuario.
+  - Si la palabra ya fue ingresada:
+      + No tomarlo como intento.
+      + Mostrarle mensaje de error para que vuelva a intentar.
+  - Si la palabra existe en el banco de palabras y es un anagrama:
+      + Marcar como un acierto.
+      + Agregarle la palabra a la lista de anagramas.
+  - Si la palabra no es un anagrama:
+      + Registrar como intento fallido.
+      + Restar 1 intento.
+  - Si la entrada es el comando para regresar al menú:
+      + Incrementar el acumulador de partida abandonada.
+      + Eliminar el progreso de estadísticas.
+      + Retornar al menú principal.
+9. Si adivinó todos los anagramas:
+  - Registrar victoria.
+  - Mostrarle al usuario la victoria con sus intentos anteriores.
+10. Si el usuario llegó a 0 intentos permitidos:
+  - Registrar derrota.
+  - Mostrarle la lista de anagramas faltantes.

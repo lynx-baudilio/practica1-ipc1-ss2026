@@ -1,0 +1,5 @@
+1. Se almacenarán los datos necesarios para los reportes con variables locales en cada juego y globales para confirmar la almacenación.
+2. Se mostrarán las secciones de los 3 juegos por separado.
+3. Se le mostrarán métricas generales al usuario.
+4. Se le mostrará al usuario comandos para regresar al menú principal o para salir del programa en general.
+No se me ocurre algo más xd.

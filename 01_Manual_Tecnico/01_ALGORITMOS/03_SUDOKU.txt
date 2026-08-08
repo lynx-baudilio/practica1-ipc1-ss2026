@@ -1,0 +1,17 @@
+1. Se genera la matriz de 9x9 vacía.
+2. La matriz generada se separará por bloques de matrices de 3x3.
+3. Por las reglas del sudoku generar una matriz resuelta por completo sin que viole una regla.
+4. Para el usuario se le generará una matriz vacía visual para el usuario.
+5. En base a la matriz solución se generarán las posiciones aleatorias para la matriz que va a ver el usuario.
+6. Primero se le solicitará la coordenada de la celda donde el usuario quiere ingresar un número.
+7. Si la entrada es el comando para regresar al menú:
+  - Incrementar el acumulador de partida abandonada.
+  - Eliminar el progreso de estadísticas.
+  - Retornar al menú principal.
+8. Se validará si la celda solicitada por el usuario existe y esté vacía o con un valor ingresado por el usuario.
+9. Si la celda es válida se le pedirá el número al usuario que desea ingresar al tablero.
+10. Para los números que son números de pistas fijas se marcarán en negrita en las celdas.
+11. Para los números que el usuario ingrese y estén correctos se le marcarán con color azul.
+12. Para los números que el usuario ingrese y estén incorrectos se le marcarán con color rojo.
+13. Si la matriz del usuario es igual a la matriz solución:
+  - Se registra como victoria y se almacenarán los datos.
