@@ -1,0 +1,64 @@
+//Constantes y variables globales para el juego Adivina Anagramas
+const PORCENTAJE_INTENTOS = 0.67
+var cantidadPartidasAbandonadas
+var cantidadPartidasJugadas
+var cantidadPartidasGanadas
+var cantidadPalabrasAcertadas
+var cantidadPalabrasFallidas
+
+Inicio flujoPrincipalAnagramas
+
+    //Variables locales que almacenan datos los reportes
+    var cantidadPartidasJugadas
+    var cantidadPartidasGanadas
+    var cantidadPalabrasAcertadas
+    var cantidadPalabrasFallidas
+
+    var cantidadIntentosPermitidos
+    var cantidadAnagramasOcultos
+
+    var bancoPalabras[]
+
+    //Escoger palabra aleatoria
+    //Buscar los anagramas correctos
+    //Desordenar la palabra que se escogió
+    //Mostrarle al usuario la palabra desordenada
+    //Y pedir entradas xd
+    //Mostrarle al usuario el historial de palabras
+    //Mostrarle al usuario el tablero de los anagramas incógnitos
+
+    Llamar seleccionarAnagramas //Escoge la palabra aleatoria y busca los anagramas correctos
+
+    cantidadIntentosPermitidos = Llamar calcularIntentosPermitidos //Función para calcular los intentos permitos del usuario por cantidadAnagramasCorrectos * PORCENTAJE_INTENTOS
+
+    Mientras (cantidadIntentosPermitidos > 0 && cantidadAnagramasOcultos > 0) hacer
+
+        Llamar mostrarTableros //Tablero del historial de las palabras, tablero de los anagramas incógnitos que añade los anagramas acertados
+
+        Llamar mostrarPalabraDesordenada
+
+        Llamar pedirEntradaAnagrama
+
+        Llamar verficarEntradaAnagrama
+
+        Si (Llamar abandonarPartida == true) entonces
+
+            retornar
+        FinSi
+
+        Si (Llamar verificarVictoria == true) entonces
+            Llamar mostrarVictoria
+            Llamar almacenarDatosReportes
+            retornar
+        FinSi
+
+        Si (Llamar verficarDerrota) entonces
+            Llamar mostrarDerrota
+            Llamar almacenarDatosReportes
+            retornar
+        FinSi
+
+        //El método almacenarDatosReportes guardará las variables locales en la globales, puesto que si se abandona la partida no se guardará el progreso
+    FinMientras
+
+Fin
