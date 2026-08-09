@@ -1,0 +1,82 @@
+Inicio subprograma seleccionarAnagramas
+
+    var numeroAleatorio
+    var palabraAleatoria
+    var esAnagrama
+    var primeraFasePosibleAnagrama = false
+    var segundaFasePosibleAnagrama = false
+
+    var posibleAnagrama
+    var letra
+    var caracter
+
+    var bancoPalabras[]
+    var letrasAnagrama[]
+    var anagramasCorrectos[]
+
+    numeroAleatorio = random
+
+    palabraAleatoria = bancoPalabras[numeroAleatorio]
+
+    letrasAnagrama = palabraAleatoria //Pasar la palabra a un arreglo de caracteres; sepa judas como se explica en pseudocodigo :b
+
+    Para cada (posibleAnagrama en bancoPalabras)
+
+        Si (longitudPosibleAnagrama == longitudPalabraAleatoria) entonces //varString.length pues
+
+            primeraFasePosibleAnagrama = true
+
+        FinSi
+
+        Si (primeraFasePosibleAnagrama) entonces //Da lo mismo no usar primeraFasePosibleAnagrama y meter esto adentro de verificar tamaño xd
+
+            Para cada (letra en letrasAnagrama)
+
+                var cantidadMaxLetra = 0 //La cantidad que hay de una letra en palabra que se escogió
+                var cantidadLetra = 0 //La cantidad que hay de una letra en el posible anagrama
+
+                //Calcular la cantidad de cada letra de la palabra que se escogió para el anagrama
+                Para cada (contadorLetra en letrasAnagrama)
+
+                    Si (contadorLetra == letra) entonces
+
+                        cantidadMaxLetra = cantidadMaxLetra + 1
+
+                    FinSi
+
+                FinPara
+
+                //Calcular la cantidad de cada letra de la palabra que es posible anagrama
+                Para cada (contadorLetra en posibleAnagrama)
+
+                    Si (contadorLetra == letra) entonces
+
+                        cantidadLetra = cantidadLetra + 1
+
+                    FinSi
+
+                FinPara
+
+                Si (cantidadMaxLetra = cantidadLetra) entonces
+
+                    segundaFasePosibleAnagrama = true
+
+                FinSi
+
+            FinPara
+
+            Si (primeraFasePosibleAnagrama && segundaFasePosibleAnagrama) entonces
+
+                esAnagrama = true
+
+            Sino
+
+                esAnagrama = false
+
+            FinSi
+
+        FinSi
+
+    FinPara
+
+Fin

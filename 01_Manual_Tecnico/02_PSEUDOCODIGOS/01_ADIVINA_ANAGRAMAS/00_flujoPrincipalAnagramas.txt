@@ -17,8 +17,6 @@ Inicio flujoPrincipalAnagramas
     var cantidadIntentosPermitidos
     var cantidadAnagramasOcultos
 
-    var bancoPalabras[]
-
     //Escoger palabra aleatoria
     //Buscar los anagramas correctos
     //Desordenar la palabra que se escogió
