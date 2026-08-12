@@ -1,0 +1,17 @@
+Inicio subprograma verficadorAnagrama
+
+    Si (Llamar verficadorLongitud() == false) entonces
+
+        retornar false
+
+    FinSi
+
+    Si (Llamar verficadorLetras() == false) entonces
+
+        retornar false
+
+    FinSi
+
+    retornar true
+
+Fin

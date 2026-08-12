@@ -1,0 +1,24 @@
+Inicio subprograma revolverLetrasAnagrama
+
+    var numeroAleatorio
+    var caracter
+    var indice = 0
+
+    var letrasRevueltas[]
+    letrasRevueltas = letrasRevueltas[longitudLetrasAnagramas]
+
+    Para cada (caracter en letrasAnagrama)
+
+        numeroAleatorio = random
+
+        Mientras (letrasRevueltas[numeroAleatorio] != null) hacer
+
+            numeroAleatorio = random
+
+        FinMientras
+
+        letrasRevueltas[numeroAleatorio] = caracter
+
+    FinPara
+
+Fin

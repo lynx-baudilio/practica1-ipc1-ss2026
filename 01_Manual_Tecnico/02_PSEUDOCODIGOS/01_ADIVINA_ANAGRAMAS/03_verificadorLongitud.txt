@@ -1,0 +1,13 @@
+Inicio subprograma verficadorLongitud
+
+    Si (tamañoAnagrama == tamañoPosibleAnagrama) entonces //El var[].length pues xd
+
+        retornar true
+
+    Sino
+
+        retornar false
+
+    FinSi
+
+Fin

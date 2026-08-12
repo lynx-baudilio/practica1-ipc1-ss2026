@@ -1,0 +1,5 @@
+Inicio subprograma calcularIntentosPermitidos
+
+    retornar floor(cantidadAnagramasCorrectos * PORCENTAJE_INTENTOS)
+
+Fin

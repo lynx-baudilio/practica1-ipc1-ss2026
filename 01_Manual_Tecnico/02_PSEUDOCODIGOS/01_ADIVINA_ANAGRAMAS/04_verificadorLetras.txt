@@ -1,0 +1,43 @@
+Inicio subprograma verificadorLetras
+
+    var letra
+    var contadorLetra
+
+    Para cada (letra en letrasAnagrama)
+
+        var cantidadMaxLetra = 0 //La cantidad que hay de una letra en anagrama
+        var cantidadLetra = 0 //La cantidad que hay de una letra en PosibleAnagrama
+
+        //Calcular la cantidad de cada letra de anagrama
+        Para cada (contadorLetra en letrasAnagrama)
+
+            Si (contadorLetra == letra) entonces
+
+                cantidadMaxLetra = cantidadMaxLetra + 1
+
+            FinSi
+
+        FinPara
+
+        //Calcular la cantidad de cada letra de PosibleAnagrama
+        Para cada (contadorLetra en letrasPosibleAnagrama)
+
+            Si (contadorLetra == letra) entonces
+
+                cantidadLetra = cantidadLetra + 1
+
+            FinSi
+
+        FinPara
+
+        Si (cantidadMaxLetra != cantidadLetra) entonces
+
+            retornar false
+
+        FinSi
+
+    FinPara
+
+    retornar true
+
+Fin

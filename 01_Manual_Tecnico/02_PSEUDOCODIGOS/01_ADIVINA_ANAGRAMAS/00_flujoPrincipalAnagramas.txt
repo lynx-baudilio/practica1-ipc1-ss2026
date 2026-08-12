@@ -1,3 +1,6 @@
+//Variables globales generales
+var abandonarPartida = false
+
 //Constantes y variables globales para el juego Adivina Anagramas
 const PORCENTAJE_INTENTOS = 0.67
 var cantidadPartidasAbandonadas
@@ -5,6 +8,13 @@ var cantidadPartidasJugadas
 var cantidadPartidasGanadas
 var cantidadPalabrasAcertadas
 var cantidadPalabrasFallidas
+
+var cantidadAnagramasCorrectos
+
+var anagramasCorrectos[]
+var letrasAnagrama[]
+var letrasPosibleAnagrama[]
+var letrasRevueltas
 
 Inicio flujoPrincipalAnagramas
 
@@ -25,38 +35,51 @@ Inicio flujoPrincipalAnagramas
     //Mostrarle al usuario el historial de palabras
     //Mostrarle al usuario el tablero de los anagramas incógnitos
 
-    Llamar seleccionarAnagramas //Escoge la palabra aleatoria y busca los anagramas correctos
+    //Escoge la palabra aleatoria y busca los anagramas correctos, también calcula la cantidadAnagramasCorrectos
+    Llamar seleccionarAnagramas()
 
-    cantidadIntentosPermitidos = Llamar calcularIntentosPermitidos //Función para calcular los intentos permitos del usuario por cantidadAnagramasCorrectos * PORCENTAJE_INTENTOS
+    //Revuelve las letras del anagramas
+    Llamar revolverLetrasAnagrama()
 
+    //Función para calcular los intentos permitos del usuario redondeando
+    cantidadIntentosPermitidos = Llamar calcularIntentosPermitidos()
+
+    cantidadAnagramasOcultos = cantidadAnagramasCorrectos
+
+    //En el código mejor hacerlo con do-while para que al menos una vez se ejecute y no hacer lo de cantidadAnagramasOcultos = cantidadAnagramasCorrectos
     Mientras (cantidadIntentosPermitidos > 0 && cantidadAnagramasOcultos > 0) hacer
 
-        Llamar mostrarTableros //Tablero del historial de las palabras, tablero de los anagramas incógnitos que añade los anagramas acertados
+        //Tablero del historial de las palabras que el usuario ingresó
+        //Mostrar las letras y la cantidad de intentos permitidos
+        //Tablero de los anagramas incógnitos (también añade los que el usuario adivinó)
+        Llamar mostrarAnagramasGUI()
 
-        Llamar mostrarPalabraDesordenada
+        Llamar pedirEntradaUsuario()
 
-        Llamar pedirEntradaAnagrama
+        Llamar verficarEntradaAnagrama()
 
-        Llamar verficarEntradaAnagrama
-
-        Si (Llamar abandonarPartida == true) entonces
-
+        Si (abandonarPartida) entonces
             retornar
         FinSi
 
-        Si (Llamar verificarVictoria == true) entonces
-            Llamar mostrarVictoria
-            Llamar almacenarDatosReportes
+        Si (cantidadAnagramasOcultos == 0) entonces
+
+            Llamar mostrarVictoria()
+            Llamar almacenarDatosReportes()
             retornar
+
         FinSi
 
-        Si (Llamar verficarDerrota) entonces
-            Llamar mostrarDerrota
-            Llamar almacenarDatosReportes
+        Si (Llamar cantidadIntentosPermitidos == 0) entonces
+
+            Llamar mostrarDerrota()
+            Llamar almacenarDatosReportes()
             retornar
+
         FinSi
 
-        //El método almacenarDatosReportes guardará las variables locales en la globales, puesto que si se abandona la partida no se guardará el progreso
     FinMientras
 
-Fin
+    //El método almacenarDatosReportes guardará las variables locales en la globales, puesto que si se abandona la partida no se guardará el progreso
+
+ Fin
