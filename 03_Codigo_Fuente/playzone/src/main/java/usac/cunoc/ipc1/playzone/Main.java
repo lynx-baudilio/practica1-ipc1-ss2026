@@ -31,6 +31,9 @@ public class Main {
     private int cantidadPalabrasFallidas = 0;
     private String palabraLetrasRevueltas;
 
+    int cantidadPalabrasAcertadasLocal = 0;
+    int cantidadPalabrasFallidasLocal = 0;
+
     private int cantidadAnagramasCorrectos;
     private int cantidadIntentosPermitidos;
     private int cantidadAnagramasOcultos;
@@ -40,7 +43,8 @@ public class Main {
     private char[] letrasPosibleAnagrama;
     
     private String[] tableroIntentosFallidos;
-    private String[] tableroAnagramasOcultos;
+    private String[] tableroAnagramasOcultos;    
+    private String[] anagramasCorrectos;
     //--------------------------------------------------------------
     
     //============VARIABLES GLOBALES - TIC TAC TOE============
@@ -56,6 +60,10 @@ public class Main {
     private Scanner scanner = new Scanner(System.in);
     //--------------------------------------------
     
+    
+    
+    
+    
     //============MÉTODOS - FLUJO PRINCIPAL============
     public static void main(String[] args) {
         
@@ -66,10 +74,14 @@ public class Main {
     
     public void iniciarPrograma() {
         
+        boolean salirDelPrograma = false;
+        
         limpiarPantalla();
         
         mostrarPantallaInicio();
-                
+        
+        do {            
+            
         mostrarMenu();
         
         switch (pedirOpcion()) {
@@ -79,14 +91,20 @@ public class Main {
             default:
                 
         }
+        
+        } while (salirDelPrograma == false);
+        
+        System.out.println("Adiós :c");
+        
     }
     //-------------------------------------------------
+    
+    
+    
     
     //============MÉTODOS - ADIVINA ANAGRAMAS============
     private void juegoAdivinaAnagramas() {
         
-        int cantidadPalabrasAcertadasLocal;
-        int cantidadPalabrasFallidasLocal;
         
         String entradaUsuario;
         
@@ -108,12 +126,8 @@ public class Main {
             mostrarAnagramasGUI();
             
             do {                
-                
-                entradaUsuario = pedirEntradaAnagrama();
-                
+                entradaUsuario = pedirEntradaAnagrama();                
             } while (verficarEntradaAnagrama(entradaUsuario) == false);
-            
-            scanner.nextLine();
             
             if (abandonarPartida) {
                 
@@ -121,56 +135,70 @@ public class Main {
                 abandonarPartida = false;
                 return;
                 
-            } else if (cantidadAnagramasOcultos == 0) {
-                
-                //mostrarVictoria();
-                System.out.println("ganaste :p");
-                                
-                cantidadPartidasGanadas = cantidadPartidasGanadas + 1;
-                cantidadPartidasJugadas = cantidadPartidasJugadas + 1;
-                
-            } else if (cantidadIntentosPermitidos == 0) {
-                
-                //mostrarDerrota();
-                System.out.println("perdiste xd");
-
-                cantidadPartidasPerdidas = cantidadPartidasPerdidas + 1;
-                cantidadPartidasJugadas = cantidadPartidasJugadas + 1;
-                
-            }
+            } 
+            
         } while (cantidadIntentosPermitidos > 0 && cantidadAnagramasOcultos > 0);
+        
+        if (cantidadAnagramasOcultos == 0) {
+            
+            mostrarAnagramasGUI();
+                
+            mostrarVictoria();
+            
+            presionarENTER();
+
+            cantidadPartidasGanadas = cantidadPartidasGanadas + 1;
+            cantidadPartidasJugadas = cantidadPartidasJugadas + 1;
+
+        } else {
+            
+            mostrarAnagramasGUI();
+
+            mostrarDerrota();
+            
+            mostrarAnagramasFaltantes();
+            
+            presionarENTER();
+
+            cantidadPartidasPerdidas = cantidadPartidasPerdidas + 1;
+            cantidadPartidasJugadas = cantidadPartidasJugadas + 1;
+
+        }
     }
     
     private void seleccionarAnagramas() {
         
-        int numeroAleatorio;
-        int indice = 0;
-        
-        String anagrama;
-        
-        cantidadAnagramasCorrectos = 0;
-        
         String[] bancoDePalabras = {
             "SOL", "LOS", "SER", "RES", "AMOR", "ROMA", "RAMO", 
-            "MORA", "ARMO", "OMAR", "CASO", "SACO", "COSA", "ASCO",
-            "PASO", "SOPA", "POSA", "SAPO", "ARCOS", "ROSCA", "ORCAS",
-            "GATO", "GOTA", "TOGA"
+            "MORA", "ARMO", "CASO", "SACO", "COSA", "ASCO",
+            "PASO", "SOPA", "POSA", "SAPO", "ARCOS", "ROSCA",
+            "ORCAS", "ROCAS", "GATO", "GOTA", "TOGA"
         };
-                
-        numeroAleatorio = random.nextInt(bancoDePalabras.length);
-        anagrama = bancoDePalabras[numeroAleatorio];
+        
+        int numeroAleatorio = random.nextInt(bancoDePalabras.length);
+        cantidadAnagramasCorrectos = 0;
+        
+        String anagrama = bancoDePalabras[numeroAleatorio];
         letrasAnagrama = anagrama.toCharArray();
         
+        for (String posibleAnagrama : bancoDePalabras) {    
+            
+            letrasPosibleAnagrama = posibleAnagrama.toCharArray();
+            
+            if (verficadorAnagrama()) {
+                cantidadAnagramasCorrectos = cantidadAnagramasCorrectos + 1;
+            }
+        }
+        
+        anagramasCorrectos = new String[cantidadAnagramasCorrectos];
+        int indice = 0;
         for (String posibleAnagrama : bancoDePalabras) {
             
             letrasPosibleAnagrama = posibleAnagrama.toCharArray();
             
             if (verficadorAnagrama()) {
-                                
-                cantidadAnagramasCorrectos = cantidadAnagramasCorrectos + 1;
-                
+                anagramasCorrectos[indice] = posibleAnagrama;
                 indice = indice + 1;
-            
             }
         }
     }
@@ -235,6 +263,7 @@ public class Main {
             
             numeroAleatorio = random.nextInt(letrasRevueltas.length);
             
+            //Los char en lugar de null tiene ASCII/Unicode para identificar si un valor está vacío
             while (letrasRevueltas[numeroAleatorio] != '\0') {                
                 numeroAleatorio = random.nextInt(letrasRevueltas.length);
             }
@@ -259,47 +288,35 @@ public class Main {
             abandonarPartida = true;
         }
                                 
-        if (verificarNumeroOSimbolo(entrada)) {
-            System.out.println("Error: Intenta de nuevo. No se permite ingresar Número o Símbolo");
+        if (verificarNumeroOSimbolo(entrada) || entrada.equalsIgnoreCase("")) {
+            System.out.println("Error: palabra inválida. Intenta de nuevo :p");
             return false;
         }
         
-        letrasPosibleAnagrama = entrada.toCharArray();
+        if (verificarYaIngresada(entrada)) {
+            System.out.println("Error: la palabra ya fue ingresada. Intenta de nuevo :p");
+            return false;
+        } 
         
-        if (verficadorAnagrama()) {
+        if (verificarExisteEnAnagramasCorrectos(entrada)) {
             
-            System.out.println("Le atinaste :D");
+            System.out.println("Le atinaste D:");
             
             cantidadAnagramasOcultos = cantidadAnagramasOcultos - 1;
             
-            int indice = 0;
-            for (String anagramaOculto : tableroAnagramasOcultos) {
-                
-                if (anagramaOculto == null) {
-                    tableroAnagramasOcultos[indice] = entrada;
-                    return true;
-                }
-                
-                indice = indice + 1;
-            }
+            almacenarEntradaAnagramasOcultos(entrada);
+            
         } else {
-            
+                
             System.out.println("No le atinaste xd");
-            
+
             cantidadIntentosPermitidos = cantidadIntentosPermitidos - 1;
-            
-            int indice = 0;
-            for (String intentoFallido : tableroIntentosFallidos) {
-                
-                if (intentoFallido == null) {
-                    tableroIntentosFallidos[indice] = entrada;
-                    return true;
-                }
-                
-                indice = indice + 1;
-            }
+
+            almacenarEntradaIntentosFallidos(entrada);
+
         }
-        return false;
+        
+        return true;
     }
     
     private boolean verificarNumeroOSimbolo(String entrada) {
@@ -322,6 +339,59 @@ public class Main {
         }
         return false;
     }    
+    
+    private boolean verificarYaIngresada(String entrada) {
+        
+        for (String anagramaOculto : tableroAnagramasOcultos) {
+            if (anagramaOculto != null && anagramaOculto.equalsIgnoreCase(entrada)) {
+                return true;
+            }
+        }
+        
+        for (String intentoFallido : tableroIntentosFallidos) {
+            if (intentoFallido != null && intentoFallido.equalsIgnoreCase(entrada)) {
+                return true;
+            }
+        }
+        
+        return false;   
+    }
+    
+    private boolean verificarExisteEnAnagramasCorrectos(String entrada) {
+        for (String anagramaCorrecto : anagramasCorrectos) {
+            if (entrada.equalsIgnoreCase(anagramaCorrecto)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private void almacenarEntradaAnagramasOcultos(String entrada) {
+        int indice = 0;
+        for (String anagramaOculto : tableroAnagramasOcultos) {
+
+            if (anagramaOculto == null) {
+                tableroAnagramasOcultos[indice] = entrada;
+                return;
+            }
+
+            indice = indice + 1;
+        }
+    }
+    
+    private void almacenarEntradaIntentosFallidos(String entrada) {
+        int indice = 0;
+            for (String intentoFallido : tableroIntentosFallidos) {
+
+                if (intentoFallido == null) {
+                    tableroIntentosFallidos[indice] = entrada;
+                    return;
+                }
+
+                indice = indice + 1;
+            }
+    }
     //---------------------------------------------------
     
     //============MÉTODOS - UTILIDADES============
@@ -329,9 +399,6 @@ public class Main {
     //************Limpiar pantalla************ 
     public void limpiarPantalla() {
         System.out.println("\033[H\033[2J");
-        System.out.flush(); 
-        //flush limpia el búfer, y es recomendable para uso en terminales de Linux
-        //en algunas versiones de windonzzzz no funciona
     }
     //****************************************
     
@@ -350,6 +417,17 @@ public class Main {
     }
     //******************************************************
     
+    //************Pedir ENTER para continuar************
+    private void presionarENTER() {
+        System.out.println(ANSI_NEGRITA + 
+                ANSI_AMARILLO + "==========================" + 
+                ANSI_BLANCO + "Presiona ENTER para continuar" + 
+                ANSI_AMARILLO + "=========================" + 
+                ANSI_RESET);
+        scanner.nextLine();
+    }
+    //**************************************************
+    
     //--------------------------------------------
     
     //============MÉTODOS - GUI============
@@ -358,48 +436,49 @@ public class Main {
     private void mostrarPantallaInicio() {
         
         String playZone = ANSI_NEGRITA + ANSI_VERDE + 
-                "|    ██████╗ ██╗      █████╗ ██╗   ██╗    ███████╗ ██████╗ ███╗   ██╗███████╗    |\n" +
-                "|    ██╔══██╗██║     ██╔══██╗╚██╗ ██╔╝    ╚══███╔╝██╔═══██╗████╗  ██║██╔════╝    |\n" +
-                "|    ██████╔╝██║     ███████║ ╚████╔╝       ███╔╝ ██║   ██║██╔██╗ ██║█████╗      |\n" +
-                "|    ██╔═══╝ ██║     ██╔══██║  ╚██╔╝       ███╔╝  ██║   ██║██║╚██╗██║██╔══╝      |\n" +
-                "|    ██║     ███████╗██║  ██║   ██║       ███████╗╚██████╔╝██║ ╚████║███████╗    |\n" +
-                "|    ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝       ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝    |\n" +
-                "|                                                                                |"
+                "|   ██████╗ ██╗      █████╗ ██╗   ██╗    ███████╗ ██████╗ ███╗   ██╗███████╗   |\n" +
+                "|   ██╔══██╗██║     ██╔══██╗╚██╗ ██╔╝    ╚══███╔╝██╔═══██╗████╗  ██║██╔════╝   |\n" +
+                "|   ██████╔╝██║     ███████║ ╚████╔╝       ███╔╝ ██║   ██║██╔██╗ ██║█████╗     |\n" +
+                "|   ██╔═══╝ ██║     ██╔══██║  ╚██╔╝       ███╔╝  ██║   ██║██║╚██╗██║██╔══╝     |\n" +
+                "|   ██║     ███████╗██║  ██║   ██║       ███████╗╚██████╔╝██║ ╚████║███████╗   |\n" +
+                "|   ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝       ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝   |\n" +
+                "|                                                                              |"
                 + ANSI_RESET;
         
         String logo = ANSI_NEGRITA + 
-                "|                                      ___                                       |\n" +
-                "|                                    ,\"---\".                                     |\n" +
-                "|                                    :     ;                                     |\n" +
-                "|                                     `-.-'                                      |\n" +
-                "|                                      | |                                       |\n" +
-                "|                                      | |                                       |\n" +
-                "|                                      | |                                       |\n" +
-                "|                                   _.-\\_/-._                                    |\n" +
-                "|                                _ / |     | \\ _                                 |\n" +
-                "|                               / /   `---'   \\ \\                                |\n" +
-                "|                              /  `-----------'  \\                               |\n" +
-                "|                             /,-\"\"-.       ,-\"\"-.\\                              |\n" +
-                "|                            ( i-..-i       i-..-i )                             |\n" +
-                "|                            |`|    |-------|    |'|                             |\n" +
-                "|                            \\ `-..-'  ,=.  `-..-'/                              |\n" +
-                "|                             `--------|=|-------'                               |\n" +
-                "|                                      | |                                       |\n" +
-                "|                                      \\ \\                                       |\n" +
-                "|                                       ) )                                      |\n" +
-                "|                                      / /                                       |\n" +
-                "|                                     ( (                                        |\n" +
-                "|                                                                                |"
+                "|                                     ___                                      |\n" +
+                "|                                   ,\"---\".                                    |\n" +
+                "|                                   :     ;                                    |\n" +
+                "|                                    `-.-'                                     |\n" +
+                "|                                     | |                                      |\n" +
+                "|                                     | |                                      |\n" +
+                "|                                     | |                                      |\n" +
+                "|                                  _.-\\_/-._                                   |\n" +
+                "|                               _ / |     | \\ _                                |\n" +
+                "|                              / /   `---'   \\ \\                               |\n" +
+                "|                             /  `-----------'  \\                              |\n" +
+                "|                            /,-\"\"-.       ,-\"\"-.\\                             |\n" +
+                "|                           ( i-..-i       i-..-i )                            |\n" +
+                "|                           |`|    |-------|    |'|                            |\n" +
+                "|                           \\ `-..-'  ,=.  `-..-'/                             |\n" +
+                "|                            `--------|=|-------'                              |\n" +
+                "|                                     | |                                      |\n" +
+                "|                                     \\ \\                                      |\n" +
+                "|                                      ) )                                     |\n" +
+                "|                                     / /                                      |\n" +
+                "|                                    ( (                                       |\n" +
+                "|                                                                              |"
                 + ANSI_RESET;
         
         String bienvenido = ANSI_NEGRITA +
                 ANSI_CYAN +
-                "|                                  Bienvenido :D                                 |\n" +
+                "|                                 Bienvenido :D                                |\n" +
                 ANSI_AMARILLO +
-                "|   ACOMODA EL ZOOM DE TU PANTALLA Y PON TEMA OSCURO PARA UNA MEJOR EXPERIENCIA  |\n" +
+                "|         ACOMODA EL ZOOM Y PON TEMA OSCURO PARA UNA MEJOR EXPERIENCIA         |\n" +
                 ANSI_BLANCO +
-                "|                Cuando estés listo presiona ENTER para continuar                |\n" +
-                "|                                                                                |" +
+                "|                                                                              |\n" +
+                "|               Cuando estés listo presiona ENTER para continuar               |\n" +
+                "|                                                                              |" +
                 ANSI_RESET;
         
         System.out.println(playZone);
@@ -474,6 +553,32 @@ public class Main {
         System.out.println("\n" + pedirOpcion);
     }
     //******************************************************
+    
+    //************Mensajes de victoria y derrota de partida************
+    private void mostrarVictoria() {
+                
+        System.out.println("\n" + ANSI_NEGRITA + ANSI_AZUL +
+                "            ..####....####...##..##...####....####...######..######.\n" +
+                "            .##......##..##..###.##..##..##..##........##....##.....\n" +
+                "            .##.###..######..##.###..######...####.....##....####...\n" +
+                "            .##..##..##..##..##..##..##..##......##....##....##.....\n" +
+                "            ..####...##..##..##..##..##..##...####.....##....######.\n" +
+                "            ........................................................\n" + ANSI_RESET
+        );        
+    }
+    
+    private void mostrarDerrota() {
+                
+        System.out.println("\n" + ANSI_NEGRITA + ANSI_ROJO +
+                "        .#####...######..#####...#####...######...####...######..######.\n" +
+                "        .##..##..##......##..##..##..##....##....##........##....##.....\n" +
+                "        .#####...####....#####...##..##....##.....####.....##....####...\n" +
+                "        .##......##......##..##..##..##....##........##....##....##.....\n" +
+                "        .##......######..##..##..#####...######...####.....##....######.\n" +
+                "        ................................................................\n" + ANSI_RESET
+        );        
+    }
+    //*****************************************************************
 
     //************Adivina Anagramas************
     private void mostrarBienvenidaAnagramas() {
@@ -490,7 +595,7 @@ public class Main {
                 "   pueden formar con exactamente esas mismas letras.\n\n" +
                 ANSI_VERDE +
                 "2. INTENTOS LIMITADOS: Tendrás una cantidad de intentos fallidos\n" +
-                "   calculada automáticamente.\n" +
+                "   calculada automáticamente.\n\n" +
                 ANSI_AMARILLO +
                 "3. REPETICIONES: Si ingresas una palabra que ya habías intentado,\n" +
                 "   ya sea correcta o incorrecta, el sistema te avisará y NO consumirá\n" +
@@ -504,8 +609,7 @@ public class Main {
                 ANSI_RESET;
                 
         System.out.println(reglas);
-        
-        System.out.println(ANSI_NEGRITA + ANSI_BLANCO + "Presiona ENTER para continuar" + ANSI_RESET);
+        presionarENTER();
     }
     
     private void mostrarAnagramasGUI() {
@@ -519,42 +623,102 @@ public class Main {
         
         String cantidadIntentosPermitidosYAnagramasFaltantes = 
                 ANSI_NEGRITA + ANSI_CYAN + "|CANTIDAD DE INTENTOS PERMITIDOS: " + ANSI_VERDE + cantidadIntentosPermitidos + ANSI_RESET +
-                ANSI_NEGRITA + ANSI_CYAN + "      CANTIDAD DE ANAGRAMAS OCULTOS: " + ANSI_VERDE + cantidadAnagramasOcultos + "       |" + ANSI_RESET;
+                ANSI_NEGRITA + ANSI_CYAN + "      CANTIDAD DE ANAGRAMAS OCULTOS: " + ANSI_VERDE + cantidadAnagramasOcultos + "       |\n" + ANSI_RESET;
         
         String tableros = ANSI_NEGRITA + ANSI_AMARILLO +
                 "--------------------------------------------------------------------------------\n" +
                 "                        ░▀█▀░█▀█░█▀▄░█░░░█▀▀░█▀▄░█▀█░█▀▀\n" +
                 "                        ░░█░░█▀█░█▀▄░█░░░█▀▀░█▀▄░█░█░▀▀█\n" +
                 "                        ░░▀░░▀░▀░▀▀░░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀\n" +
-                "--------------------------------------------------------------------------------\n" + ANSI_RESET +
-                ANSI_NEGRITA + ANSI_ROJO + "╦╔╗╔╔╦╗╔═╗╔╗╔╔╦╗╔═╗╔═╗                  " + ANSI_CYAN + "╔═╗╔╗╔╔═╗╔═╗╦═╗╔═╗╔╦╗╔═╗╔═╗\n" + ANSI_RESET +
-                ANSI_NEGRITA + ANSI_ROJO + "║║║║ ║ ║╣ ║║║ ║ ║ ║╚═╗                  " + ANSI_CYAN + "╠═╣║║║╠═╣║ ╦╠╦╝╠═╣║║║╠═╣╚═╗\n" + ANSI_RESET +
-                ANSI_NEGRITA + ANSI_ROJO + "╩╝╚╝ ╩ ╚═╝╝╚╝ ╩ ╚═╝╚═╝                  " + ANSI_CYAN + "╩ ╩╝╚╝╩ ╩╚═╝╩╚═╩ ╩╩ ╩╩ ╩╚═╝\n" + ANSI_RESET +
-                ANSI_NEGRITA + ANSI_ROJO + "╔═╗╔═╗╦  ╦  ╦╔╦╗╔═╗╔═╗                  " + ANSI_CYAN + "   ╔══╗╔═╗╦ ╦╦ ╔╦╗╔═╗╔═╗   \n" + ANSI_RESET +
-                ANSI_NEGRITA + ANSI_ROJO + "╠╣ ╠═╣║  ║  ║ ║║║ ║╚═╗                  " + ANSI_CYAN + "   ║  ║║  ║ ║║  ║ ║ ║╚═╗   \n" + ANSI_RESET +
-                ANSI_NEGRITA + ANSI_ROJO + "╚  ╩ ╩╩═╝╩═╝╩═╩╝╚═╝╚═╝                  " + ANSI_CYAN + "   ╚══╝╚═╝╚═╝╩═╝╩ ╚═╝╚═╝   " + ANSI_RESET;
+                "--------------------------------------------------------------------------------\n" + ANSI_RESET;
+        
+        String intentosFallidos = ANSI_NEGRITA + ANSI_ROJO + 
+                "╦╔╗╔╔╦╗╔═╗╔╗╔╔╦╗╔═╗╔═╗    ╔═╗╔═╗╦  ╦  ╦╔╦╗╔═╗╔═╗\n" +
+                "║║║║ ║ ║╣ ║║║ ║ ║ ║╚═╗    ╠╣ ╠═╣║  ║  ║ ║║║ ║╚═╗\n" +  
+                "╩╝╚╝ ╩ ╚═╝╝╚╝ ╩ ╚═╝╚═╝    ╚  ╩ ╩╩═╝╩═╝╩═╩╝╚═╝╚═╝" + ANSI_RESET;
+        
+        String anagramasOcultos = ANSI_NEGRITA + ANSI_CYAN + 
+                "╔═╗╔╗╔╔═╗╔═╗╦═╗╔═╗╔╦╗╔═╗╔═╗    ╔══╗╔═╗╦ ╦╦ ╔╦╗╔═╗╔═╗\n" + 
+                "╠═╣║║║╠═╣║ ╦╠╦╝╠═╣║║║╠═╣╚═╗    ║  ║║  ║ ║║  ║ ║ ║╚═╗\n" + 
+                "╩ ╩╝╚╝╩ ╩╚═╝╩╚═╩ ╩╩ ╩╩ ╩╚═╝    ╚══╝╚═╝╚═╝╩═╝╩ ╚═╝╚═╝" + ANSI_RESET;
         
         System.out.println(letrasRevueltas + cantidadIntentosPermitidosYAnagramasFaltantes + tableros);
         
+        System.out.println(intentosFallidos);
+        
         for (String intentoFallido : tableroIntentosFallidos) {
             
-            if (intentoFallido != null) {
-                System.out.println(intentoFallido);
+            if (intentoFallido == null) {
+                System.out.print( 
+                    ANSI_BLANCO + ANSI_NEGRITA + "[ " + ANSI_RESET +
+                    ANSI_ROJO + " " + ANSI_RESET +
+                    ANSI_BLANCO + ANSI_NEGRITA + " ]    " + ANSI_RESET
+                );
+            } else {
+                System.out.print( 
+                    ANSI_BLANCO + ANSI_NEGRITA + "[ " + ANSI_RESET +
+                    ANSI_ROJO + intentoFallido + ANSI_RESET +
+                    ANSI_BLANCO + ANSI_NEGRITA + " ]    " + ANSI_RESET
+                );
             }
         }
+        
+        System.out.println("\n");
+        
+        System.out.println(anagramasOcultos);
         
         for (String anagramaOculto : tableroAnagramasOcultos) {
             
-            if (anagramaOculto != null) {
-                System.out.println(anagramaOculto);
+            if (anagramaOculto == null) {
+                System.out.print(
+                        ANSI_BLANCO + ANSI_NEGRITA + "[ " + ANSI_RESET +
+                        ANSI_CYAN + "?" + ANSI_RESET +
+                        ANSI_BLANCO + ANSI_NEGRITA + " ]    " + ANSI_RESET
+                );
+            } else {
+                System.out.print(
+                        ANSI_BLANCO + ANSI_NEGRITA + "[ " + ANSI_RESET +
+                        ANSI_CYAN + anagramaOculto + ANSI_RESET +
+                        ANSI_BLANCO + ANSI_NEGRITA + " ]    " + ANSI_RESET
+                );
             }
         }
         
+        System.out.println("\n");
+        
+    }
+    
+    private void mostrarAnagramasFaltantes() {
+        
+        System.out.print("Los anagramas faltantes son: ");
+        
+        for (String anagramaCorrecto : anagramasCorrectos) {
+            
+            boolean anagramaFaltante = true;
+            
+            for (String anagramaOculto : tableroAnagramasOcultos) {
+                if (anagramaOculto != null && anagramaOculto.equalsIgnoreCase(anagramaCorrecto)) {
+                    anagramaFaltante = false;
+                    break;
+                }
+            }
+            
+            if (anagramaFaltante) {
+                System.out.print(
+                        ANSI_BLANCO + ANSI_NEGRITA + "[ " + ANSI_RESET
+                        + ANSI_VERDE + anagramaCorrecto + ANSI_RESET
+                        + ANSI_BLANCO + ANSI_NEGRITA + " ]    " + ANSI_RESET
+                );
+            }
+            
+        }
+        
+        System.out.println("\n");
     }
     
     private String pedirEntradaAnagrama() {
         
-        System.out.println(ANSI_AMARILLO + "(Entradas válidas: palabras sin símbolos y sin números)" + ANSI_RESET);
+        System.out.println(ANSI_AMARILLO + "(Entradas válidas: (A-Z) sin 'ñ', espacios, símbolos y números)" + ANSI_RESET);
         System.out.print(ANSI_NEGRITA + "» " + ANSI_RESET);
         
         return scanner.nextLine().trim().toUpperCase();
