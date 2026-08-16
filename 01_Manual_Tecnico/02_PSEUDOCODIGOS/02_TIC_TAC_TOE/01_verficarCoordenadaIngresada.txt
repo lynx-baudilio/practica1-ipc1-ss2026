@@ -1,0 +1,10 @@
+Inicio subprograma verficarCoordenadaIngresada (tablero, entradaJugador, fichaJugador)
+
+    Si (Llamar noHayFicha(tablero, entradaJugador, fichaJugador)) entonces
+        espacio = fichaJugador
+        retornar true
+    Sino
+        retornar false
+    FinSi
+
+Fin

@@ -1,0 +1,9 @@
+Inicio subprograma evaluarFilas(ficha)
+
+    Desde (var i = 0 ; i < 2)
+        Si (tablero[i][0] == ficha && tablero[i][1] == ficha && tablero[i][2] == ficha) entonces
+            retornar true
+        FinSi
+    FinDesde
+
+Fin

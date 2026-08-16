@@ -1,0 +1,17 @@
+Inicio subprograma verificarVictoria(ficha)
+
+    Si (Llamar evaluarFilas(ficha)) entonces
+        retornar true;
+    FinSi
+
+    Si (Llamar evaluarColumnas) entonces
+        retornar true
+    FinSi
+
+    Si (Llamar evaluarDiagonales) entonces
+        retornar true
+    FinSi
+
+    retornar false
+
+Fin

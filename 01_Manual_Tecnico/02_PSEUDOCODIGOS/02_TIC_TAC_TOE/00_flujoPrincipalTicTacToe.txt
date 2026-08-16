@@ -1,0 +1,102 @@
+//VARIABLES GLOBALES - TIC TAC TOE
+var tablero[3][3] //Asignarle el tamaño de 3x3 a la matriz :p
+
+var cantidadPartidasAbandonadasTTT
+var cantidadPartidasJugadasTTT
+var cantidadPartidasGanadasTTT
+var cantidadPartidasEmpatadasTTT
+
+var cantidadVictoriasComputadoraTTT
+
+var rachaActualVictoriasTTT
+var rachaActualDerrotasTTT
+
+var jugadasTotalesTTT
+
+Inicio flujoPrincipalTicTacToe
+
+    var entradaJugador
+
+    var fichaJugador = X
+    var fichaComputadora = O
+
+    var turnoComputadora = 1
+    var jugadasTotales = 0
+
+    var existeGanador = false
+    var existeEmpate = false
+
+    Llamar llenarTableroConCoordenadas()
+
+    Mientras (existeGanador == false && existeEmpate == false) hacer
+
+        Llamar mostrarTablero()
+
+        //====TURNO DEL JUGADOR====
+        Hacer
+
+            entradaJugador = Llamar pedirCoordenadaTTT()
+
+            Si (Llamar verificarAbandonarPartida()) entonces
+                cantidadPartidasAbandonadasTTT = cantidadPartidasAbandonadasTTT + 1
+                retornar
+            FinSi
+
+        Mientras (Llamar verficarCoordenadaIngresada(entradaJugador, fichaJugador) == false)
+
+        jugadasTotales = jugadasTotales + 1;
+
+        Si (Llamar verificarVictoria(fichaJugador)) entonces
+
+            existeGanador = true
+            cantidadPartidasGanadasTTT = cantidadPartidasGanadasTTT + 1
+            cantidadPartidasJugadasTTT = cantidadPartidasJugadasTTT + 1
+
+            rachaActualVictoriasTTT = rachaActualVictoriasTTT + 1
+            rachaActualDerrotasTTT = 0
+
+            jugadasTotalesTTT = jugadasTotalesTTT + jugadasTotales
+
+            Llamar mostrarVictoria()
+
+        Sino Si (jugadasTotales == 9 ) entonces
+
+            existeEmpate = true
+            cantidadPartidasEmpatadasTTT = cantidadPartidasEmpatadasTTT + 1
+            cantidadPartidasJugadasTTT = cantidadPartidasJugadasTTT + 1
+
+            rachaActualVictoriasTTT = 0
+            rachaActualDerrotasTTT = 0
+
+            jugadasTotalesTTT = jugadasTotalesTTT + jugadasTotales
+
+            Llamar mostrarDerrota()
+
+        FinSi
+
+        //====TURNO DE LA COMPUTADORA====
+        Si (!existeGanador && !existeEmpate) entonces
+
+            Llamar decidirTurnoComputadora(turnoComputadora, fichaComputadora, fichaJugador)
+
+            turnoComputadora = turnoComputadora + 1
+            jugadasTotales = jugadasTotales + 1
+
+            Si (Llamar verificarVictoria(fichaComputadora)) entonces
+
+                existeGanador = true
+                cantidadVictoriasComputadoraTTT = cantidadVictoriasComputadoraTTT + 1
+                cantidadPartidasJugadasTTT = cantidadPartidasJugadasTTT + 1
+
+                rachaActualDerrotasTTT = rachaActualDerrotasTTT + 1
+                rachaActualVictoriasTTT = 0
+
+                jugadasTotalesTTT = jugadasTotalesTTT + jugadasTotales
+
+            FinSi
+
+        FinSi
+
+    FinMientras
+
+Fin

@@ -1,0 +1,11 @@
+Inicio subprograma evaluarDiagonales(ficha)
+
+    Si (tablero[0][0] == ficha && tablero[1][1] == ficha && tablero[2][2] == ficha) entonces
+        retornar true
+    FinSi
+
+    Si (tablero[0][2] == ficha && tablero[1][1] == ficha && tablero[2][0] == ficha) entonces
+        retornar true
+    FinSi
+
+Fin

@@ -1,0 +1,29 @@
+Inicio subprograma decidirTurnoComputadora(turnoComputadora, fichaComputadora, fichaJugador)
+
+    Si (turnoComputadora == 1) entonces
+
+        Si (tablero[1][1] == "[ B2 ]") entonces
+            tablero[1][1] = fichaComputadora
+        Sino
+            Llamar colocarFichaComputadoraEnEsquina(fichaComputadora)
+        FinSi
+
+    Sino
+
+        Si (Llamar existeLineaParaGanar(fichaComputadora)) entonces
+
+            Llamar colocarFichaComputadoraParaGanar(fichaComputadora)
+
+        Sino Si (Llamar existeLineaParaBloquear(fichaJugador)) entonces
+
+            Llamar colocarFichaComputadoraParaBloquear(fichaComputadora)
+
+        Sino
+
+            Llamar colocarFichaComputadoraEnCasillaEstrategica(fichaComputadora)
+
+        FinSi
+
+    FinSi
+
+Fin
