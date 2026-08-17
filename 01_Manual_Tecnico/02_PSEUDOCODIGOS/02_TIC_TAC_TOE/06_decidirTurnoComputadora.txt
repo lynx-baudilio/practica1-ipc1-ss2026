@@ -1,4 +1,4 @@
-Inicio subprograma decidirTurnoComputadora(turnoComputadora, fichaComputadora, fichaJugador)
+Inicio subprograma decidirTurnoComputadora(turnoComputadora, fichaComputadora, fichaJugador, f1, c1, f2, c2, f3, c3) //ojalá no sea malo tener tanto parámetro xd
 
     Si (turnoComputadora == 1) entonces
 
@@ -10,19 +10,47 @@ Inicio subprograma decidirTurnoComputadora(turnoComputadora, fichaComputadora, f
 
     Sino
 
-        Si (Llamar existeLineaParaGanar(fichaComputadora)) entonces
+        //Mmmmmmmmmmmm *tirando el emote del gato pensando*
 
-            Llamar colocarFichaComputadoraParaGanar(fichaComputadora)
+        //Se tiene que evaluar cada fila pero también cada casilla de cada fila
+        //Primero las filas, en cada fila se debe de evaluar cada casilla
+        //Estoy repitiendo lo mismo xd
+        //Al fin y al cabo se evalua cada fila, cada columna y cada diagonal
+        //Para evaluar la fila se necesita evaluar la primera casilla, la segunda y la tercera en cada fila
+        //Para evaluar la columna es de la misma forma que la fila
+        //Para las diagonales es directamente evaluar cada diagonal xd
 
-        Sino Si (Llamar existeLineaParaBloquear(fichaJugador)) entonces
+        //Para evaluar todo eso lo mejor es hacer un método que evalue si la primera casilla con la segunda tienen la misma ficha de la computadora, y la tercera casilla vacía
+        //Después hacer lo mismo pero ahora viendo si la segunda casilla está vacía, y por último evaluar lo mismo pero si la primera casilla está vacía
 
-            Llamar colocarFichaComputadoraParaBloquear(fichaComputadora)
+        //Como cumplen lo mismo entonces lo mejor es evaluar lineas, cada linea viendo cada casilla
+        //y ya xd
 
-        Sino
+        //cada posicion será con variables identificadoras
+        //f1 y c1 son posiciones que sería la primera casilla de una linea, ya sea vertical, horizontal o diagonal, pero es la primera casilla de esa línea
+        //y lo mismo para lo demás
 
-            Llamar colocarFichaComputadoraEnCasillaEstrategica(fichaComputadora)
-
+        Si (tablero[f1][c1] == fichaBuscar && tablero[f2][c2] == fichaBuscar && Llamar esCasillaLibre(f3, c3)) entonces
+            tablero[f3][c3] = fichaPC
+            retornar verdadero
         FinSi
+
+        Si (tablero[f1][c1] == fichaBuscar && tablero[f3][c3] == fichaBuscar && Llamar esCasillaLibre(f2, c2)) entonces
+            tablero[f2][c2] = fichaPC
+            retornar verdadero
+        FinSi
+
+        Si (tablero[f2][c2] == fichaBuscar && tablero[f3][c3] == fichaBuscar && Llamar esCasillaLibre(f1, c1)) entonces
+            tablero[f1][c1] = fichaPC
+            retornar verdadero
+        FinSi
+
+        retornar falso
+
+
+        //Mmmm, creo que me compliqué por los parámetros xd, no será tan legible si se deja así
+        //Pero la idea es tener un método que se coloque manualmente cada posicion
+        //Muy largo pero mejor :p
 
     FinSi
 
