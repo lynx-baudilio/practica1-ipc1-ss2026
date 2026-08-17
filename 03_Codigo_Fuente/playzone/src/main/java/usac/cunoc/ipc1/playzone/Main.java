@@ -72,8 +72,71 @@ public class Main {
     //=====================================================
     //============ VARIABLES GLOBALES - SUDOKU ============
     //=====================================================
+    private String[][] tableroSudoku = new String[9][9];
     
+    private int cantidadPartidasJugadasSudoku = 0;
+    private int cantidadPartidasGanadasSudoku = 0;
+    private int cantidadPartidasAbandonadasSudoku = 0;
+    private int jugadasInvalidasSudoku = 0;
+    
+    private int[][] tableroSolucionSudoku = new int[9][9];
+    private int[][] tableroJuegoSudoku = new int[9][9];
+    private boolean[][] esCasillaFija = new boolean[9][9];
+    
+    private int filaSeleccionada = -1;
+    private int columnaSeleccionada = -1;
+    
+    //************ BANCO DE TABLEROS - SUDOKU ************
+    private final int[][][] BANCO_SUDOKUS = {
+        {
+            {5, 3, 4, 6, 7, 8, 9, 1, 2},
+            {6, 7, 2, 1, 9, 5, 3, 4, 8},
+            {1, 9, 8, 3, 4, 2, 5, 6, 7},
+            {8, 5, 9, 7, 6, 1, 4, 2, 3},
+            {4, 2, 6, 8, 5, 3, 7, 9, 1},
+            {7, 1, 3, 9, 2, 4, 8, 5, 6},
+            {9, 6, 1, 5, 3, 7, 2, 8, 4},
+            {2, 8, 7, 4, 1, 9, 6, 3, 5},
+            {3, 4, 5, 2, 8, 6, 1, 7, 9}
+        },
+        {
+            {1, 2, 3, 4, 5, 6, 7, 8, 9},
+            {4, 5, 6, 7, 8, 9, 1, 2, 3},
+            {7, 8, 9, 1, 2, 3, 4, 5, 6},
+            {2, 3, 1, 5, 6, 4, 8, 9, 7},
+            {5, 6, 4, 8, 9, 7, 2, 3, 1},
+            {8, 9, 7, 2, 3, 1, 5, 6, 4},
+            {3, 1, 2, 6, 4, 5, 9, 7, 8},
+            {6, 4, 5, 9, 7, 8, 3, 1, 2},
+            {9, 7, 8, 3, 1, 2, 6, 4, 5}
+        },
+        {
+            {8, 2, 7, 1, 5, 4, 3, 9, 6},
+            {9, 6, 5, 3, 2, 7, 1, 4, 8},
+            {3, 4, 1, 6, 8, 9, 7, 5, 2},
+            {5, 9, 3, 4, 6, 8, 2, 7, 1},
+            {4, 7, 2, 5, 1, 3, 6, 8, 9},
+            {6, 1, 8, 9, 7, 2, 4, 3, 5},
+            {7, 8, 6, 2, 3, 5, 9, 1, 4},
+            {1, 5, 4, 7, 9, 6, 8, 2, 3},
+            {2, 3, 9, 8, 4, 1, 5, 6, 7}
+        },
+        {
+            {2, 9, 5, 7, 4, 3, 8, 6, 1},
+            {4, 3, 1, 8, 6, 5, 9, 2, 7},
+            {8, 7, 6, 1, 9, 2, 5, 4, 3},
+            {3, 8, 7, 4, 5, 9, 2, 1, 6},
+            {6, 1, 2, 3, 7, 8, 4, 9, 5},
+            {5, 4, 9, 2, 1, 6, 7, 3, 8},
+            {7, 6, 3, 5, 2, 4, 1, 8, 9},
+            {9, 2, 8, 6, 3, 1, 7, 5, 4},
+            {1, 5, 4, 9, 8, 7, 3, 6, 2}
+        }
+    };
     //-----------------------------------------------------
+    
+    
+    
     
     //==============================================
     //============ CLASES DE UTILIDADES ============
@@ -114,6 +177,8 @@ public class Main {
             case 2:
                 juegoTicTacToe();
                 break;
+            case 3:
+                juegoSudoku();
             case 5: 
                 salirDelPrograma = true;
             default:
@@ -133,12 +198,12 @@ public class Main {
     //=====================================================
     //============ MÉTODOS - ADIVINA ANAGRAMAS ============
     //=====================================================
-    private void juegoAdivinaAnagramas() {
-        
-        String entradaUsuario;
+    public void juegoAdivinaAnagramas() {
         
         limpiarPantalla();
         mostrarReglasAA();
+        
+        String entradaUsuario;
         
         seleccionarAnagramas();
         
@@ -424,7 +489,10 @@ public class Main {
     //===============================================
     //============ MÉTODOS - TIC TAC TOE ============
     //===============================================
-    private void juegoTicTacToe() {
+    public void juegoTicTacToe() {
+        
+        limpiarPantalla();
+        mostrarReglasTTT();
         
         String entradaJugador;
         
@@ -435,10 +503,7 @@ public class Main {
         boolean existeGanador = false;
         boolean existeEmpate = false;
         
-        limpiarPantalla();
-        mostrarReglasTTT();
-        
-        llenarTableroConCoordenadas();
+        llenarTableroConCoordenadasTTT();
         
         do {
             
@@ -709,6 +774,85 @@ public class Main {
         }
     }
     //-----------------------------------------------
+    
+    
+    
+    
+    //==========================================
+    //============ MÉTODOS - SUDOKU ============
+    //==========================================
+    public void juegoSudoku() {
+        
+        limpiarPantalla();
+        mostrarReglasSudoku();
+        
+        String entradaCoordenada;
+        
+    }
+    
+    private boolean buscarYValidarCoordenada(String entrada) {
+        
+        return false;
+    }
+    
+    private int[][] seleccionarTableroBase() {
+        int[][] tableroElegido;
+        
+        int indice = random.nextInt(BANCO_SUDOKUS.length);
+        
+        tableroElegido = new int[9][9];
+        
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                tableroElegido[i][j] = BANCO_SUDOKUS[indice][i][j];
+            }
+        }
+        
+        return tableroElegido;
+    }
+    
+    private boolean validarReglasSudoku(int fila, int columna, int numero) {
+        
+        for (int posicionAEvaluar = 0; posicionAEvaluar < 9; posicionAEvaluar++) {
+            if ((posicionAEvaluar != columna && tableroJuegoSudoku[fila][posicionAEvaluar] == numero) ||
+                    (posicionAEvaluar != fila && tableroJuegoSudoku[posicionAEvaluar][columna] == numero)) {
+                return false;
+            }
+        }
+        
+        int inicioFila = (fila / 3) * 3;
+        int inicioColumna = (columna / 3) * 3;
+
+        for (int i = inicioFila; i < inicioFila + 3; i++) {
+            for (int j = inicioColumna; j < inicioColumna + 3; j++) {
+                
+                if ((i != fila || j != columna) && tableroJuegoSudoku[i][j] == numero) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+    
+    private void procesarJugadaUsuario(int fila, int columna, int numero) {
+        
+    }
+    
+    private boolean verificarVictoria() {
+        
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                
+                if (tableroJuegoSudoku[i][j] != tableroSolucionSudoku[i][j]) {
+                    return false;
+                }   
+            }
+        }
+        
+        return true;
+    }
+    //------------------------------------------
     
     
     
@@ -1094,7 +1238,7 @@ public class Main {
     //*************************************
     //************ TIC TAC TOE ************
     //*************************************
-    private void llenarTableroConCoordenadas() {
+    private void llenarTableroConCoordenadasTTT() {
         //FILA A
         tableroTTT[0][0] = "[ A 1 ]";
         tableroTTT[0][1] = "[ A 2 ]";
@@ -1192,6 +1336,31 @@ public class Main {
 
         return scanner.nextLine().trim().toUpperCase();
     }
-    //-------------------------------------
+    
+    
+    
+    
+    //********************************
+    //************ SUDOKU ************
+    //********************************
+    private void llenarTableroConCoordenadasSudoku() {
         
+    }
+
+    private void generarPistasAleatorias(int cantidadPistas) {
+        
+    }
+
+    private void mostrarReglasSudoku() {
+        
+    }
+    
+    private void mostrarTableroSudoku() {
+        
+    }
+    
+    private void pedirCoordenadaSudoku() {
+        
+    }
+    //-------------------------------------
 }
