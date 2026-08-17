@@ -5,30 +5,31 @@ import java.util.Scanner;
 
 public class Main {
     
-    //============CODIGO ANSI============
+    //=====================================
+    //============ CODIGO ANSI ============
+    //=====================================
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_NEGRITA = "\u001B[1m";
     private static final String ANSI_ROJO = "\u001B[31m";
     private static final String ANSI_VERDE = "\u001B[32m";
     private static final String ANSI_AMARILLO = "\u001B[33m";
     private static final String ANSI_AZUL = "\u001B[34m";
+    private static final String ANSI_MORADO = "\u001B[35m";
     private static final String ANSI_CYAN = "\u001B[36m";
     private static final String ANSI_BLANCO = "\u001B[37m";
-    //-----------------------------------
+    //-------------------------------------
     
-    //============VARIABLES GLOBALES - Auxiliares Generales============
-    private boolean abandonarPartida = false;
-    //-----------------------------------------------------------------
-    
-    //============VARIABLES GLOBALES - ADIVINA ANAGRAMAS============
+    //================================================================
+    //============ VARIABLES GLOBALES - ADIVINA ANAGRAMAS ============
+    //================================================================
     private static final double PORCENTAJE_INTENTOS = 0.67;
     
     private int cantidadPartidasAbandonadasAA = 0;
-    private int cantidadPartidasJugadas = 0;
-    private int cantidadPartidasGanadas = 0;
-    private int cantidadPartidasPerdidas = 0;
-    private int cantidadPalabrasAcertadas = 0;
-    private int cantidadPalabrasFallidas = 0;
+    private int cantidadPartidasJugadasAA = 0;
+    private int cantidadPartidasGanadasAA = 0;
+    private int cantidadPartidasPerdidasAA = 0;
+    private int cantidadPalabrasAcertadasAA = 0;
+    private int cantidadPalabrasFallidasAA = 0;
     private String palabraLetrasRevueltas;
 
     int cantidadPalabrasAcertadasLocal = 0;
@@ -45,26 +46,48 @@ public class Main {
     private String[] tableroIntentosFallidos;
     private String[] tableroAnagramasOcultos;    
     private String[] anagramasCorrectos;
-    //--------------------------------------------------------------
+    //----------------------------------------------------------------
     
-    //============VARIABLES GLOBALES - TIC TAC TOE============
+    //==========================================================
+    //============ VARIABLES GLOBALES - TIC TAC TOE ============
+    //==========================================================
+    private String[][] tableroTTT = new String[3][3];
     
-    //--------------------------------------------------------
+    private int cantidadPartidasAbandonadasTTT = 0;
+    private int cantidadPartidasJugadasTTT = 0;
+    private int cantidadPartidasGanadasTTT = 0;
+    private int cantidadPartidasEmpatadasTTT = 0;
     
-    //============VARIABLES GLOBALES - SUDOKU============
+    private int cantidadVictoriasComputadoraTTT = 0;
     
-    //---------------------------------------------------z
+    private int rachaActualVictoriasTTT = 0;
+    private int rachaActualDerrotasTTT = 0;
     
-    //============CLASES DE UTILIDADES============
+    private String fichaJugadorTTT = ANSI_NEGRITA + ANSI_CYAN + "[  X  ]" + ANSI_RESET;
+    private String fichaComputadoraTTT = ANSI_NEGRITA + ANSI_ROJO + "[  O  ]" + ANSI_RESET;
+    
+    private int jugadasTotalesTTT = 0;
+    //----------------------------------------------------------
+    
+    //=====================================================
+    //============ VARIABLES GLOBALES - SUDOKU ============
+    //=====================================================
+    
+    //-----------------------------------------------------
+    
+    //==============================================
+    //============ CLASES DE UTILIDADES ============
+    //==============================================
     private Random random = new Random();
     private Scanner scanner = new Scanner(System.in);
-    //--------------------------------------------
+    //----------------------------------------------
     
     
     
     
-    
-    //============MÉTODOS - FLUJO PRINCIPAL============
+    //===================================================
+    //============ MÉTODOS - FLUJO PRINCIPAL ============
+    //===================================================
     public static void main(String[] args) {
         
         Main main = new Main();
@@ -88,6 +111,11 @@ public class Main {
             case 1:
                 juegoAdivinaAnagramas();
                 break;
+            case 2:
+                juegoTicTacToe();
+                break;
+            case 5: 
+                salirDelPrograma = true;
             default:
                 
         }
@@ -97,25 +125,26 @@ public class Main {
         System.out.println("Adiós :c");
         
     }
-    //-------------------------------------------------
+    //---------------------------------------------------
     
     
     
     
-    //============MÉTODOS - ADIVINA ANAGRAMAS============
+    //=====================================================
+    //============ MÉTODOS - ADIVINA ANAGRAMAS ============
+    //=====================================================
     private void juegoAdivinaAnagramas() {
-        
         
         String entradaUsuario;
         
         limpiarPantalla();
-        mostrarBienvenidaAnagramas();
+        mostrarReglasAA();
         
         seleccionarAnagramas();
         
-        revolverLetrasAnagrama();
+        revolverLetrasAA();
         
-        cantidadIntentosPermitidos = calcularIntentosPermitidos();
+        cantidadIntentosPermitidos = calcularIntentosPermitidosAA();
         tableroIntentosFallidos = new String[cantidadIntentosPermitidos];
         
         cantidadAnagramasOcultos = cantidadAnagramasCorrectos;
@@ -125,17 +154,16 @@ public class Main {
             
             mostrarAnagramasGUI();
             
-            do {                
-                entradaUsuario = pedirEntradaAnagrama();                
-            } while (verficarEntradaAnagrama(entradaUsuario) == false);
-            
-            if (abandonarPartida) {
+            do {
                 
-                cantidadPartidasAbandonadasAA = cantidadPartidasAbandonadasAA + 1;
-                abandonarPartida = false;
-                return;
+                entradaUsuario = pedirEntradaAnagrama();
                 
-            } 
+                if (verificarAbandonarPartida(entradaUsuario)) {
+                    cantidadPartidasAbandonadasAA = cantidadPartidasAbandonadasAA + 1;
+                    return;
+                }
+                
+            } while (verficarEntradaAA(entradaUsuario) == false);
             
         } while (cantidadIntentosPermitidos > 0 && cantidadAnagramasOcultos > 0);
         
@@ -147,8 +175,8 @@ public class Main {
             
             presionarENTER();
 
-            cantidadPartidasGanadas = cantidadPartidasGanadas + 1;
-            cantidadPartidasJugadas = cantidadPartidasJugadas + 1;
+            cantidadPartidasGanadasAA = cantidadPartidasGanadasAA + 1;
+            cantidadPartidasJugadasAA = cantidadPartidasJugadasAA + 1;
 
         } else {
             
@@ -160,8 +188,8 @@ public class Main {
             
             presionarENTER();
 
-            cantidadPartidasPerdidas = cantidadPartidasPerdidas + 1;
-            cantidadPartidasJugadas = cantidadPartidasJugadas + 1;
+            cantidadPartidasPerdidasAA = cantidadPartidasPerdidasAA + 1;
+            cantidadPartidasJugadasAA = cantidadPartidasJugadasAA + 1;
 
         }
     }
@@ -205,16 +233,16 @@ public class Main {
     
     private boolean verficadorAnagrama() {
         
-        if (verficadorLongitud() == false) {
+        if (verficadorLongitudAA()== false) {
             return false;
-        } else if (verificadorLetras() == false) {
+        } else if (verificadorLetrasAA()== false) {
             return false;
         }
         
         return true;
     }
     
-    private boolean verficadorLongitud() {
+    private boolean verficadorLongitudAA() {
         
         if (letrasAnagrama.length == letrasPosibleAnagrama.length) {
             return true;
@@ -223,7 +251,7 @@ public class Main {
         return false;
     }
     
-    private boolean verificadorLetras() {
+    private boolean verificadorLetrasAA() {
         
         for (char letra : letrasAnagrama) {
             
@@ -252,7 +280,7 @@ public class Main {
         return true;
     }
     
-    private void revolverLetrasAnagrama() {
+    private void revolverLetrasAA() {
         
         int numeroAleatorio;
         palabraLetrasRevueltas = "";
@@ -278,33 +306,29 @@ public class Main {
         }
     }
     
-    private int calcularIntentosPermitidos() {
+    private int calcularIntentosPermitidosAA() {
         return (int) Math.floor(cantidadAnagramasCorrectos * PORCENTAJE_INTENTOS);
     }
     
-    private boolean verficarEntradaAnagrama(String entrada) {
-        
-        if (entrada.equalsIgnoreCase("salir")) {
-            abandonarPartida = true;
-        }
-                                
-        if (verificarNumeroOSimbolo(entrada) || entrada.equalsIgnoreCase("")) {
+    private boolean verficarEntradaAA(String entrada) {
+                                        
+        if (verificarNumeroOSimboloAA(entrada) || entrada.length() < 3) {
             System.out.println("Error: palabra inválida. Intenta de nuevo :p");
             return false;
         }
         
-        if (verificarYaIngresada(entrada)) {
+        if (verificarYaIngresadaAA(entrada)) {
             System.out.println("Error: la palabra ya fue ingresada. Intenta de nuevo :p");
             return false;
         } 
         
-        if (verificarExisteEnAnagramasCorrectos(entrada)) {
+        if (verificarExisteEnAnagramasCorrectosAA(entrada)) {
             
             System.out.println("Le atinaste D:");
             
             cantidadAnagramasOcultos = cantidadAnagramasOcultos - 1;
             
-            almacenarEntradaAnagramasOcultos(entrada);
+            almacenarEntradaAnagramasOcultosAA(entrada);
             
         } else {
                 
@@ -312,14 +336,14 @@ public class Main {
 
             cantidadIntentosPermitidos = cantidadIntentosPermitidos - 1;
 
-            almacenarEntradaIntentosFallidos(entrada);
+            almacenarEntradaIntentosFallidosAA(entrada);
 
         }
         
         return true;
     }
     
-    private boolean verificarNumeroOSimbolo(String entrada) {
+    private boolean verificarNumeroOSimboloAA(String entrada) {
         
         char[] letrasEntrada = entrada.toCharArray();
         
@@ -340,7 +364,7 @@ public class Main {
         return false;
     }    
     
-    private boolean verificarYaIngresada(String entrada) {
+    private boolean verificarYaIngresadaAA(String entrada) {
         
         for (String anagramaOculto : tableroAnagramasOcultos) {
             if (anagramaOculto != null && anagramaOculto.equalsIgnoreCase(entrada)) {
@@ -357,7 +381,7 @@ public class Main {
         return false;   
     }
     
-    private boolean verificarExisteEnAnagramasCorrectos(String entrada) {
+    private boolean verificarExisteEnAnagramasCorrectosAA(String entrada) {
         for (String anagramaCorrecto : anagramasCorrectos) {
             if (entrada.equalsIgnoreCase(anagramaCorrecto)) {
                 return true;
@@ -367,7 +391,7 @@ public class Main {
         return false;
     }
     
-    private void almacenarEntradaAnagramasOcultos(String entrada) {
+    private void almacenarEntradaAnagramasOcultosAA(String entrada) {
         int indice = 0;
         for (String anagramaOculto : tableroAnagramasOcultos) {
 
@@ -380,7 +404,7 @@ public class Main {
         }
     }
     
-    private void almacenarEntradaIntentosFallidos(String entrada) {
+    private void almacenarEntradaIntentosFallidosAA(String entrada) {
         int indice = 0;
             for (String intentoFallido : tableroIntentosFallidos) {
 
@@ -392,17 +416,321 @@ public class Main {
                 indice = indice + 1;
             }
     }
-    //---------------------------------------------------
+    //-----------------------------------------------------
+
     
-    //============MÉTODOS - UTILIDADES============
     
-    //************Limpiar pantalla************ 
+    
+    //===============================================
+    //============ MÉTODOS - TIC TAC TOE ============
+    //===============================================
+    private void juegoTicTacToe() {
+        
+        String entradaJugador;
+        
+        int turnoComputadora = 1;
+        
+        int jugadasTotales = 0;
+        
+        boolean existeGanador = false;
+        boolean existeEmpate = false;
+        
+        limpiarPantalla();
+        mostrarReglasTTT();
+        
+        llenarTableroConCoordenadas();
+        
+        do {
+            
+            limpiarPantalla();
+            
+            mostrarTableroTTT();
+            
+            //==== TURNO DEL JUGADOR ====
+            do {
+                
+                entradaJugador = pedirCoordenadaTTT();
+                
+                if (verificarAbandonarPartida(entradaJugador)) {
+                    cantidadPartidasAbandonadasTTT = cantidadPartidasAbandonadasTTT + 1;
+                    return;
+                }
+                
+            } while (verificarCoordenadaIngresadaTTT(entradaJugador) == false);
+            
+            jugadasTotales = jugadasTotales + 1;
+            
+            if (verificarVictoriaTTT(fichaJugadorTTT)) {
+                
+                existeGanador = true;
+                
+                cantidadPartidasGanadasTTT = cantidadPartidasGanadasTTT + 1;
+                cantidadPartidasJugadasTTT = cantidadPartidasJugadasTTT + 1;
+                
+                rachaActualVictoriasTTT = rachaActualVictoriasTTT + 1;
+                rachaActualDerrotasTTT = 0;
+                
+                jugadasTotalesTTT = jugadasTotalesTTT + jugadasTotales;
+                
+                mostrarTableroTTT();
+                mostrarVictoria();
+                presionarENTER();
+                
+            } else if (jugadasTotales == 9) {
+                
+                existeEmpate = true;
+                
+                cantidadPartidasEmpatadasTTT = cantidadPartidasEmpatadasTTT + 1;
+                cantidadPartidasJugadasTTT = cantidadPartidasJugadasTTT + 1;
+                
+                jugadasTotalesTTT = jugadasTotalesTTT + jugadasTotales;
+                
+                mostrarTableroTTT();
+                mostrarEmpate();
+                presionarENTER();
+            }
+            
+            //==== TURNO DE LA COMPUTADORA ====
+            if (!existeGanador && !existeEmpate && jugadasTotales < 9) {
+                
+                decidirTurnoComputadoraTTT(turnoComputadora);
+                
+                turnoComputadora = turnoComputadora + 1;
+                
+                jugadasTotales = jugadasTotales + 1;
+                
+                if (verificarVictoriaTTT(fichaComputadoraTTT)) {
+                    
+                    existeGanador = true;
+                    
+                    cantidadVictoriasComputadoraTTT = cantidadVictoriasComputadoraTTT + 1;
+                    cantidadPartidasJugadasTTT = cantidadPartidasJugadasTTT + 1;
+                    
+                    rachaActualDerrotasTTT = rachaActualDerrotasTTT + 1;
+                    rachaActualVictoriasTTT = 0;
+                    
+                    jugadasTotalesTTT = jugadasTotalesTTT + jugadasTotales;
+                    
+                    mostrarTableroTTT();
+                    mostrarDerrota();
+                    presionarENTER();
+                }
+            }
+            
+        } while (!existeGanador && !existeEmpate);
+        
+    }
+    
+    private boolean verificarCoordenadaIngresadaTTT(String entrada) {
+        
+        String entradaConFormato = "[ " + entrada + " ]";
+        
+        for (int fila = 0; fila < 3; fila++) {
+            for (int columna = 0; columna < 3; columna++) {
+                
+                if (tableroTTT[fila][columna].equals(entradaConFormato)) {
+                    tableroTTT[fila][columna] = fichaJugadorTTT;
+                    return true;
+                }
+            }
+        }
+        
+        System.out.println("Error: la casilla seleccionada es inválida");
+        return false;
+    }
+    
+    private boolean verificarVictoriaTTT(String ficha) {
+        return evaluarFilasTTT(ficha) || evaluarColumnasTTT(ficha) || evaluarDiagonalesTTT(ficha);
+    }
+    
+    private boolean evaluarFilasTTT(String ficha) {
+        
+        for (int fila = 0; fila < 3; fila++) {
+            
+            if (tableroTTT[fila][0].equals(ficha) && 
+                    tableroTTT[fila][1].equals(ficha) && 
+                    tableroTTT[fila][2].equals(ficha)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private boolean evaluarColumnasTTT(String ficha) {
+        
+        for (int columna = 0; columna < 3; columna++) {
+            
+            if (tableroTTT[0][columna].equals(ficha) && 
+                    tableroTTT[1][columna].equals(ficha) && 
+                    tableroTTT[2][columna].equals(ficha)) {
+                return true;
+            }    
+        }
+        
+        return false;
+    }
+    
+    private boolean evaluarDiagonalesTTT(String ficha) {
+        
+        if (tableroTTT[0][0].equals(ficha) && 
+                tableroTTT[1][1].equals(ficha) && 
+                tableroTTT[2][2].equals(ficha)) {
+            return true;
+        } else if (tableroTTT[0][2].equals(ficha) && 
+                tableroTTT[1][1].equals(ficha) && 
+                tableroTTT[2][0].equals(ficha)) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private void decidirTurnoComputadoraTTT(int turno) {
+        
+        if (turno == 1) {
+            
+            if (tableroTTT[1][1].equals("[ B 2 ]")) {
+                tableroTTT[1][1] = fichaComputadoraTTT;
+            } else {
+                colocarEnEsquinaAleatoriaTTT(fichaComputadoraTTT);
+            }
+            
+        } else {
+            
+            boolean existeCasillaParaGanar = intentarColocarParaGanarBloquearTTT(fichaComputadoraTTT, fichaComputadoraTTT);
+            
+            if (!existeCasillaParaGanar) {
+                
+                boolean existeCasillaParaBloquear = intentarColocarParaGanarBloquearTTT(fichaJugadorTTT, fichaComputadoraTTT);
+                
+                if (!existeCasillaParaBloquear) {
+                    
+                    colocarEnCasillaLibreTTT();
+                }       
+            }   
+        }
+    }
+    
+    private void colocarEnEsquinaAleatoriaTTT(String fichaComputadora) {
+        
+        int opcionDeEsquina;
+        boolean fichaColocada = false;
+        
+        do {            
+            
+            opcionDeEsquina = random.nextInt(4);
+            
+            if (opcionDeEsquina == 0 && esCasillaVaciaTTT(0, 0)) {
+                tableroTTT[0][0] = fichaComputadora;
+                fichaColocada = true;
+            } else if (opcionDeEsquina == 1 && esCasillaVaciaTTT(0, 2)) {
+                tableroTTT[0][2] = fichaComputadora;
+                fichaColocada = true;
+            } else if (opcionDeEsquina == 2 && esCasillaVaciaTTT(2, 0)) {
+                tableroTTT[2][0] = fichaComputadora;
+                fichaColocada = true;
+            } else if (opcionDeEsquina == 3 && esCasillaVaciaTTT(2, 2)) {
+                tableroTTT[2][2] = fichaComputadora;
+                fichaColocada = true;
+            } 
+            
+        } while (fichaColocada == false);
+        
+    }
+    
+    private boolean intentarColocarParaGanarBloquearTTT(String fichaABuscar, String fichaAColocar) {
+        
+        //Revisa si hay 3 en raya en horizontal (revisa las 3 filas)
+        for (int fila = 0; fila < 3; fila++) {
+            if (evaluarCasillasYColocarTTT(fila,0, fila,1, fila,2, fichaABuscar, fichaAColocar)) {
+                return true;
+            }
+        }
+        
+        //Revisa si hay 3 en raya en vertical (revisa las 3 columnas)
+        for (int columna = 0; columna < 3; columna++) {
+            if (evaluarCasillasYColocarTTT(0,columna, 1,columna, 2,columna, fichaABuscar, fichaAColocar)) {
+                return true;
+            }
+        }
+        
+        //Revisa si hay 3 en raya en las dos diagonales
+        if (evaluarCasillasYColocarTTT(0,0, 1,1, 2,2, fichaABuscar, fichaAColocar)) {
+            return true;
+        }
+        if (evaluarCasillasYColocarTTT(0,2, 1,1, 2,0, fichaABuscar, fichaAColocar)) {
+            return true;
+        }
+        
+        return false;
+    }
+        
+    private boolean evaluarCasillasYColocarTTT(int f1, int c1, int f2, int c2, int f3, int c3, String fichaABuscar, String fichaAColocar) {
+        
+        if (tableroTTT[f1][c1].equals(fichaABuscar) && 
+                tableroTTT[f2][c2].equals(fichaABuscar) && 
+                esCasillaVaciaTTT(f3, c3)) {
+            tableroTTT[f3][c3] = fichaAColocar;
+            return true;
+        }
+        
+        if (tableroTTT[f1][c1].equals(fichaABuscar) && 
+                esCasillaVaciaTTT(f2, c2) && 
+                tableroTTT[f3][c3].equals(fichaABuscar)) {
+            tableroTTT[f2][c2] = fichaAColocar;
+            return true;
+        }
+        
+        if (esCasillaVaciaTTT(f1, c1) && 
+                tableroTTT[f2][c2].equals(fichaABuscar) && 
+                tableroTTT[f3][c3].equals(fichaABuscar)) {
+            tableroTTT[f1][c1] = fichaAColocar;
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private boolean esCasillaVaciaTTT(int fila, int columna) {
+        return !tableroTTT[fila][columna].equals(fichaJugadorTTT) && !tableroTTT[fila][columna].equals(fichaComputadoraTTT);
+    }
+    
+    private void colocarEnCasillaLibreTTT() {
+        
+        for (int fila = 0; fila < 3; fila++) {
+            for (int columna = 0; columna < 3; columna++) {
+                
+                if (esCasillaVaciaTTT(fila, columna)) {
+                    tableroTTT[fila][columna] = fichaComputadoraTTT;
+                    return;
+                }
+            }
+        }
+    }
+    //-----------------------------------------------
+    
+    
+    
+    
+    //==============================================
+    //============ MÉTODOS - UTILIDADES ============
+    //==============================================
+    
+    //************ Limpiar pantalla ************ 
     public void limpiarPantalla() {
         System.out.println("\033[H\033[2J");
     }
-    //****************************************
     
-    //************Pedir Entrada - Menú principal************
+    //************ Verificar si el jugador desea regresar al menú principal ************
+    private boolean verificarAbandonarPartida(String entrada) {
+        if (entrada.equalsIgnoreCase("salir")) {
+            return true;
+        }
+        return false;
+    }
+
+    //************ Pedir Entrada - Menú principal ************
     private int pedirOpcion() {
         
         int opcion;
@@ -415,9 +743,8 @@ public class Main {
         
         return opcion;
     }
-    //******************************************************
     
-    //************Pedir ENTER para continuar************
+    //************ Pedir ENTER para continuar ************
     private void presionarENTER() {
         System.out.println(ANSI_NEGRITA + 
                 ANSI_AMARILLO + "==========================" + 
@@ -425,14 +752,19 @@ public class Main {
                 ANSI_AMARILLO + "=========================" + 
                 ANSI_RESET);
         scanner.nextLine();
-    }
-    //**************************************************
-    
+    }    
     //--------------------------------------------
     
-    //============MÉTODOS - GUI============
     
-    //************Menú principal************
+    
+    
+    //=======================================
+    //============ MÉTODOS - GUI ============
+    //=======================================
+    
+    //****************************************
+    //************ Menú principal ************
+    //****************************************
     private void mostrarPantallaInicio() {
         
         String playZone = ANSI_NEGRITA + ANSI_VERDE + 
@@ -539,9 +871,10 @@ public class Main {
         
         System.out.println(reportesYSalir);
     }
-    //**************************************
     
-    //************Pedir entrada - Menú principal************
+    //********************************************************
+    //************ Pedir entrada - Menú principal ************
+    //********************************************************
     private void mostrarPedirOpcion() {
         
         String pedirOpcion = ANSI_NEGRITA + ANSI_CYAN +
@@ -552,9 +885,10 @@ public class Main {
         
         System.out.println("\n" + pedirOpcion);
     }
-    //******************************************************
     
-    //************Mensajes de victoria y derrota de partida************
+    //****************************************************************
+    //************ Mensajes de victoria, derrota y empate ************
+    //****************************************************************
     private void mostrarVictoria() {
                 
         System.out.println("\n" + ANSI_NEGRITA + ANSI_AZUL +
@@ -578,17 +912,45 @@ public class Main {
                 "        ................................................................\n" + ANSI_RESET
         );        
     }
-    //*****************************************************************
-
-    //************Adivina Anagramas************
-    private void mostrarBienvenidaAnagramas() {
+    
+    private void mostrarEmpate() {
+        
+        System.out.println("\n" + ANSI_AMARILLO +
+                "                .######..##...##..#####....####...######..######.\n" +
+                "                .##......###.###..##..##..##..##....##....##.....\n" +
+                "                .####....##.#.##..#####...######....##....####...\n" +
+                "                .##......##...##..##......##..##....##....##.....\n" +
+                "                .######..##...##..##......##..##....##....######.\n" +
+                "                ................................................." +
+                ANSI_RESET);
+        
+    }
+    
+    private void mostrarComandoMenu() {
+        String comandoParaRegresar = ANSI_NEGRITA + ANSI_MORADO +
+                "                    ╔──────────────────────────────────────╗\n" +
+                "                    │Comando para regresar al menu: \"salir\"│\n" +
+                "                    ╚──────────────────────────────────────╝\n" +
+                ANSI_RESET;
+        
+        System.out.println(comandoParaRegresar);
+    }
+    //****************************************************************
+    
+    
+    
+    
+    //*******************************************
+    //************ Adivina Anagramas ************
+    //*******************************************
+    private void mostrarReglasAA() {
         
         String reglas = ANSI_NEGRITA + ANSI_CYAN + 
                 "================================================================================\n" +
                 "      ░█▀▄░█▀▀░█▀▀░█░░░█▀█░█▀▀░░░░░░░░░█▀█░█▀█░█▀█░█▀▀░█▀▄░█▀█░█▄█░█▀█░█▀▀\n" +
                 "      ░█▀▄░█▀▀░█░█░█░░░█▀█░▀▀█░░░▄▄▄░░░█▀█░█░█░█▀█░█░█░█▀▄░█▀█░█░█░█▀█░▀▀█\n" +
                 "      ░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░░░░░░░░░▀░▀░▀░▀░▀░▀░▀▀▀░▀░▀░▀░▀░▀░▀░▀░▀░▀▀▀\n" +
-                "================================================================================\n" +
+                "================================================================================\n\n" +
                 ANSI_AMARILLO + 
                 "1. OBJETIVO: Se te mostrará una lista de letras totalmente desordenadas.\n" +
                 "   Debes adivinar todas las palabras que son anagramas, es decir, que se\n" +
@@ -615,6 +977,8 @@ public class Main {
     private void mostrarAnagramasGUI() {
         
         limpiarPantalla();
+        
+        mostrarComandoMenu();
         
         String letrasRevueltas =
                 ANSI_AZUL + "================================================================================\n" + ANSI_RESET +
@@ -723,8 +1087,111 @@ public class Main {
         
         return scanner.nextLine().trim().toUpperCase();
     }
-    //*****************************************
+
     
+    
+    
+    //*************************************
+    //************ TIC TAC TOE ************
+    //*************************************
+    private void llenarTableroConCoordenadas() {
+        //FILA A
+        tableroTTT[0][0] = "[ A 1 ]";
+        tableroTTT[0][1] = "[ A 2 ]";
+        tableroTTT[0][2] = "[ A 3 ]";
+        
+        //FILA B
+        tableroTTT[1][0] = "[ B 1 ]";
+        tableroTTT[1][1] = "[ B 2 ]";
+        tableroTTT[1][2] = "[ B 3 ]";
+        
+        //FILA C
+        tableroTTT[2][0] = "[ C 1 ]";
+        tableroTTT[2][1] = "[ C 2 ]";
+        tableroTTT[2][2] = "[ C 3 ]";
+        
+    }
+    
+    private void mostrarReglasTTT() {
+        
+        String reglas = ANSI_NEGRITA + ANSI_MORADO +
+                "================================================================================\n" +
+                "    ░█▀▄░█▀▀░█▀▀░█░░░█▀█░█▀▀░░░░░░░░░▀█▀░▀█▀░█▀▀░░░▀█▀░█▀█░█▀▀░░░▀█▀░█▀█░█▀▀\n" +
+                "    ░█▀▄░█▀▀░█░█░█░░░█▀█░▀▀█░░░▄▄▄░░░░█░░░█░░█░░░░░░█░░█▀█░█░░░░░░█░░█░█░█▀▀\n" +
+                "    ░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░░░░░░░░░░▀░░▀▀▀░▀▀▀░░░░▀░░▀░▀░▀▀▀░░░░▀░░▀▀▀░▀▀▀\n" +
+                "================================================================================\n\n" + 
+                ANSI_CYAN +
+                "1. OBJETIVO: Alinea 3 de tus fichas en línea recta, ya sea horizontal, vertical\n" +
+                "   o diagonal, antes de que la computadora lo consiga primero xd.\n\n" +
+                ANSI_AMARILLO +
+                "2. COORDENADAS: Para realizar una jugada, ingresa la coordenada de la\n" +
+                "   casilla disponible que mirás tal cual en el tablero (ejemplo: A 1, B 2, C 3).\n\n" +
+                ANSI_CYAN +
+                "3. TURNO DE LA COMPUTADORA: Justo después de tu movimiento, la computadora\n" +
+                "   colocará su ficha buscando bloquearte o armar su jugada.\n\n" +
+                ANSI_AMARILLO +
+                "4. COMANDO DE SALIDA: Puedes escribir la palabra SALIR en cualquier\n" +
+                "   momento si deseas abandonar la partida y volver al menú.\n\n" +
+                ANSI_CYAN +
+                "5. FIN DEL JUEGO: Ganas al hacer 3 en raya. Pierdes si la computadora\n" +
+                "   completa su línea primero, o empatan si se llenan las 9 casillas.\n" +
+                ANSI_RESET;
+        
+        System.out.println(reglas);
+        presionarENTER();
+    }
+
+    private void mostrarTableroTTT() {
+        
+        mostrarComandoMenu();
+        
+        String tablero = ANSI_NEGRITA + ANSI_AZUL + 
+                "           ████████╗ █████╗ ██████╗ ██╗     ███████╗██████╗  ██████╗ \n" +
+                "           ╚══██╔══╝██╔══██╗██╔══██╗██║     ██╔════╝██╔══██╗██╔═══██╗\n" +
+                "              ██║   ███████║██████╔╝██║     █████╗  ██████╔╝██║   ██║\n" +
+                "              ██║   ██╔══██║██╔══██╗██║     ██╔══╝  ██╔══██╗██║   ██║\n" +
+                "              ██║   ██║  ██║██████╔╝███████╗███████╗██║  ██║╚██████╔╝\n" +
+                "              ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ " + 
+                ANSI_RESET;
+        
+        String ticTacToe = ANSI_NEGRITA + ANSI_MORADO +
+                "  ______                  ______                       ______                   \n" +
+                " /\\__  _\\__              /\\__  _\\                     /\\__  _\\                  \n" +
+                " \\/_/\\ \\/\\_\\    ___      \\/_/\\ \\/    __      ___      \\/_/\\ \\/   ___      __    \n" +
+                "    \\ \\ \\/\\ \\  /'___\\       \\ \\ \\  /'__`\\   /'___\\       \\ \\ \\  / __`\\  /'__`\\  \n" +
+                "     \\ \\ \\ \\ \\/\\ \\__/        \\ \\ \\/\\ \\L\\.\\_/\\ \\__/        \\ \\ \\/\\ \\L\\ \\/\\  __/  \n" +
+                "      \\ \\_\\ \\_\\ \\____\\        \\ \\_\\ \\__/.\\_\\ \\____\\        \\ \\_\\ \\____/\\ \\____\\ \n" +
+                "       \\/_/\\/_/\\/____/         \\/_/\\/__/\\/_/\\/____/         \\/_/\\/___/  \\/____/ \n";
+        
+        System.out.println(tablero);
+        System.out.println(ticTacToe);
+        
+        System.out.println(ANSI_NEGRITA + ANSI_BLANCO + "================================================================================\n" + ANSI_RESET);
+        
+        for (int i = 0; i < 3; i++) {
+            System.out.print("                           ");
+            for (int j = 0; j < 3; j++) {
+                System.out.print(tableroTTT[i][j]);
+                if (j < 2) {
+                    System.out.print(ANSI_NEGRITA + ANSI_AZUL + " ║ " + ANSI_RESET);
+                }
+            }
+            System.out.println();
+            if (i < 2) {
+                System.out.println(ANSI_NEGRITA + ANSI_AZUL + "                           ════════╬═════════╬════════" + ANSI_RESET);
+            }
+        }
+        System.out.println();
+        System.out.println(ANSI_NEGRITA + ANSI_BLANCO + "================================================================================\n" + ANSI_RESET);
+    }
+    
+    private String pedirCoordenadaTTT() {
+        
+        System.out.println("Entradas válidas: coordenadas como se ven en pantalla. Ejemplos: A 1, B 2, C 3");
+        System.out.print(ANSI_NEGRITA + "» " + ANSI_RESET);
+
+        return scanner.nextLine().trim().toUpperCase();
+    }
     //-------------------------------------
         
 }
