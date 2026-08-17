@@ -1,0 +1,9 @@
+Inicio subprograma procesarJugadaUsuario(matrizJuego, matrizSolucion, fila, columna, numero)
+
+    [fila][columna] = numero
+
+    Si (Llamar validarReglasSudoku(matrizJuego, fila, columna, numero) || numero != matrizSolucion[fila][columna]) entonces
+        jugadasInvalidas = jugadasInvalidas + 1
+    FinSi
+
+Fin

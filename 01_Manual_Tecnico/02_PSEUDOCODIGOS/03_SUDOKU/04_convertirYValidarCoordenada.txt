@@ -1,0 +1,13 @@
+Inicio subprograma convertirYValidarCoordenada(entrada)
+
+    Si (longitudEntrada != 2) entonces
+        retornar false
+    FinSi
+
+    Si (Llamar verificarCoordenadaVaciaSudoku(entrada)) entonces
+        retornar true
+    Sino
+        retornar false
+    FinSi
+
+Fin

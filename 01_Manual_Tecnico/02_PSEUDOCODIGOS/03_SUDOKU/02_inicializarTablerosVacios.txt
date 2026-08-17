@@ -1,0 +1,11 @@
+Inicio subprograma inicializarTablerosVacios(matrizJuego, esCasillaFija)
+
+    Desde (var i = 0 ; i < 9 ; i++) hacer
+        Desde(var j = 0 ; j < 9 ; j++) hacer
+
+            matrizJuego[i][j] = 0
+            esCasillaFija[i][j] = false
+
+        FinDesde
+    FinDesde
+Fin

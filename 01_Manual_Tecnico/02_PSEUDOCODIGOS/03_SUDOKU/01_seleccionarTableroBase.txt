@@ -1,0 +1,9 @@
+Inicio subprograma seleccionarTableroBase()
+
+    var[4] bancoSudokus
+
+    var indice = random
+
+    retornar bancoSudokus[indice]
+
+Fin

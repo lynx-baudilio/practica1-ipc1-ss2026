@@ -1,0 +1,53 @@
+Inicio
+
+    var[9][9] matrizSolucion
+    var[9][9] matrizJuego
+
+    var[9][9] esCasillaFija //matriz para saber si es una casilla inmutable
+
+    var entradaCoordenada
+
+    var fila
+    var columna
+    var numero
+
+    var juegoTerminado = false
+    var victoria = false
+
+    matrizSolucion = Llamar seleccionarTableroBase()
+
+    matrizJuego = Llamar inicializarTablerosVacios(esCasillaFija)
+
+    Llamar generarPistasAleatorias(matrizSolucion, matrizJuego, esCasillaFija, 24)
+
+    Mientras (juegoTerminado == false) hacer
+
+        Llamar limpiarPantalla()
+        Llamar mostrarTablero(matrizJuego, matrizSolucion, esCasillaFija)
+
+        Llamar pedirEntradaSudoku()
+
+        Si (Llamar convertirYValidarCoordenada(entradaCoordenada) entonces
+            Llamar mostrarMensajeError()
+        Sino Si (esCasillaFija[fila][columna] == true) entonces
+            Llamar mostrarMensajeError()
+        Sino
+            Si (numero >= 1 Y numero <= 9) entonces
+
+                Llamar procesarJugadaUsuario(matrizJuego, matrizSolucion, fila, columna, numero)
+
+                Si (Llamar verificarVictoria(matrizJuego, matrizSolucion)) entonces
+                    victoria = true
+                    juegoTerminado = true
+                FinSi
+            Sino
+                Llamar mostrarMensajeError()
+            FinSi
+        SinSi
+    FinMientras
+
+    Si (victoria) entonces
+        procesarVictoria(matrizJuego, matrizSolucion, esFija)
+    FinSi
+
+Fin

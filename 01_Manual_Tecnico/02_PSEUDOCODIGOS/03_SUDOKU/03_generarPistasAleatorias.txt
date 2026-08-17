@@ -1,0 +1,21 @@
+Inicio subprograma generarPistasAleatorias(matrizSolucion, matrizJuego, esCasillaFija, cantidadPistas)
+
+    var contador = 0
+    var fila
+    var columna
+
+    Mientras (contador < cantidadPistas) hacer
+
+        fila = random
+        columna = random
+
+        Si (esCasillaFija[fila][columna] == false) entonces
+            esCasillaFija[fila][columna] = true
+            matrizJuego[fila][columna] = matrizSolucion[fila][columna]
+            contador = contador + 1
+        FinSi
+
+    FinMientras
+
+Fin
+

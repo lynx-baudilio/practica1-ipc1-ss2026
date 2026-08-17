@@ -1,0 +1,27 @@
+Inicio subprograma validarReglasSudoku(matriz, fila, columna, numero)
+
+    // Validar Fila y Columna
+    Desde (var casilla ; casilla < 9 ; casilla++) hacer
+
+        Si ((casilla != columna && matriz[fila][casilla] == numero) || (casilla != fila && matriz[casilla][columna] == numero)) entonces
+            retornar false
+        FinSi
+
+    FinDesde
+
+    // Validar Caja de 3x3
+    inicioFila = (fila / 3) * 3
+    inicioColumna = (columna / 3) * 3
+
+    Desde (var i = inicioFila ; i < inicioFila + 3 ; i++) hacer
+        Desde (var j = inicioColumna ; j < inicioColumna + 3 ; j++) hacer
+
+            Si ((i != fila || j != columna) && matriz[i][j] == numero) entonces
+                retornar false
+            FinSi
+
+        FinDesde
+    FinDesde
+
+    retornar true
+Fin
