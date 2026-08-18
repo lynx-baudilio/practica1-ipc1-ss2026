@@ -2,6 +2,7 @@ package usac.cunoc.ipc1.playzone;
 
 import java.util.Random;
 import java.util.Scanner;
+import javax.print.attribute.HashPrintServiceAttributeSet;
 
 public class Main {
     
@@ -72,19 +73,23 @@ public class Main {
     //=====================================================
     //============ VARIABLES GLOBALES - SUDOKU ============
     //=====================================================
-    private String[][] tableroSudoku = new String[9][9];
+    private final static int DIMENSION_SUDOKU = 9;
+    private final static int CANTIDAD_PISTAS_INICIALES = 48;
+    
+    private String[][] tableroSudoku = new String[DIMENSION_SUDOKU][DIMENSION_SUDOKU];
     
     private int cantidadPartidasJugadasSudoku = 0;
     private int cantidadPartidasGanadasSudoku = 0;
     private int cantidadPartidasAbandonadasSudoku = 0;
     private int jugadasInvalidasSudoku = 0;
+    private int cantidadJugadasTotalesSudoku = 0;
     
-    private int[][] tableroSolucionSudoku = new int[9][9];
-    private int[][] tableroJuegoSudoku = new int[9][9];
-    private boolean[][] esCasillaFija = new boolean[9][9];
+    private int[][] tableroSolucionSudoku = new int[DIMENSION_SUDOKU][DIMENSION_SUDOKU];
+    private int[][] tableroJuegoSudoku = new int[DIMENSION_SUDOKU][DIMENSION_SUDOKU];
+    private boolean[][] esCasillaFija = new boolean[DIMENSION_SUDOKU][DIMENSION_SUDOKU];
     
-    private int filaSeleccionada = -1;
-    private int columnaSeleccionada = -1;
+    private int filaSeleccionada = 0;
+    private int columnaSeleccionada = 0;
     
     //************ BANCO DE TABLEROS - SUDOKU ************
     private final int[][][] BANCO_SUDOKUS = {
@@ -179,6 +184,10 @@ public class Main {
                 break;
             case 3:
                 juegoSudoku();
+                break;
+            case 4:
+                mostrarReportes();
+                break;
             case 5: 
                 salirDelPrograma = true;
             default:
@@ -242,6 +251,9 @@ public class Main {
 
             cantidadPartidasGanadasAA = cantidadPartidasGanadasAA + 1;
             cantidadPartidasJugadasAA = cantidadPartidasJugadasAA + 1;
+            
+            cantidadPalabrasAcertadasAA = cantidadPalabrasAcertadasAA + cantidadPalabrasAcertadasLocal;
+            cantidadPalabrasFallidasAA = cantidadPalabrasFallidasAA + cantidadPalabrasFallidasLocal;
 
         } else {
             
@@ -256,6 +268,8 @@ public class Main {
             cantidadPartidasPerdidasAA = cantidadPartidasPerdidasAA + 1;
             cantidadPartidasJugadasAA = cantidadPartidasJugadasAA + 1;
 
+            cantidadPalabrasAcertadasAA = cantidadPalabrasAcertadasAA + cantidadPalabrasAcertadasLocal;
+            cantidadPalabrasFallidasAA = cantidadPalabrasFallidasAA + cantidadPalabrasFallidasLocal;
         }
     }
     
@@ -378,12 +392,12 @@ public class Main {
     private boolean verficarEntradaAA(String entrada) {
                                         
         if (verificarNumeroOSimboloAA(entrada) || entrada.length() < 3) {
-            System.out.println("Error: palabra inválida. Intenta de nuevo :p");
+            mostrarMensajeError("no debe de contener números o símbolos. Tampoco palabras menores de 3 letras");
             return false;
         }
         
         if (verificarYaIngresadaAA(entrada)) {
-            System.out.println("Error: la palabra ya fue ingresada. Intenta de nuevo :p");
+            mostrarMensajeError("la palabra ya fue ingresada. Intenta de nuevo :p");
             return false;
         } 
         
@@ -392,6 +406,7 @@ public class Main {
             System.out.println("Le atinaste D:");
             
             cantidadAnagramasOcultos = cantidadAnagramasOcultos - 1;
+            cantidadPalabrasAcertadasLocal = cantidadPalabrasAcertadasLocal + 1;
             
             almacenarEntradaAnagramasOcultosAA(entrada);
             
@@ -400,9 +415,9 @@ public class Main {
             System.out.println("No le atinaste xd");
 
             cantidadIntentosPermitidos = cantidadIntentosPermitidos - 1;
+            cantidadPalabrasFallidasLocal = cantidadPalabrasFallidasLocal + 1;
 
             almacenarEntradaIntentosFallidosAA(entrada);
-
         }
         
         return true;
@@ -600,7 +615,7 @@ public class Main {
             }
         }
         
-        System.out.println("Error: la casilla seleccionada es inválida");
+        mostrarMensajeError("la casilla seleccionada es inválida");
         return false;
     }
     
@@ -787,23 +802,64 @@ public class Main {
         mostrarReglasSudoku();
         
         String entradaCoordenada;
+        String entradaNumero;
+        boolean juegoTerminado = false;
         
+        tableroSolucionSudoku = seleccionarTableroBaseSudoku();
+        llenarTableroConCoordenadasSudoku();
+        generarPistasAleatoriasSudoku(CANTIDAD_PISTAS_INICIALES);
+        
+        do {            
+            
+            limpiarPantalla();
+            mostrarTableroSudoku();
+            
+            do {                
+                
+                entradaCoordenada = pedirCoordenadaSudoku();
+                
+                if (verificarAbandonarPartida(entradaCoordenada)) {
+                    cantidadPartidasAbandonadasSudoku = cantidadPartidasAbandonadasSudoku + 1;
+                    return;
+                }
+                
+            } while (verificarCoordenadaValidaSudoku(entradaCoordenada) == false);
+        
+            do {       
+                
+                entradaNumero = pedirNumeroSudoku();
+                
+                if (verificarAbandonarPartida(entradaNumero)) {
+                    cantidadPartidasAbandonadasSudoku = cantidadPartidasAbandonadasSudoku + 1;
+                    return;
+                }
+                
+            } while (verificarEntradaSudoku(Integer.parseInt(entradaNumero)));
+
+            if (verificarVictoriaSudoku()) {
+                juegoTerminado = true;
+                
+                cantidadPartidasGanadasSudoku = cantidadPartidasGanadasSudoku + 1;
+                cantidadPartidasJugadasSudoku = cantidadPartidasJugadasSudoku + 1;
+            }
+            
+        } while (juegoTerminado == false);
+        
+        limpiarPantalla();
+        mostrarTableroSudoku();
+        mostrarVictoria();
+        presionarENTER();
     }
     
-    private boolean buscarYValidarCoordenada(String entrada) {
-        
-        return false;
-    }
-    
-    private int[][] seleccionarTableroBase() {
+    private int[][] seleccionarTableroBaseSudoku() {
         int[][] tableroElegido;
         
         int indice = random.nextInt(BANCO_SUDOKUS.length);
         
-        tableroElegido = new int[9][9];
+        tableroElegido = new int[DIMENSION_SUDOKU][DIMENSION_SUDOKU];
         
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
+        for (int i = 0; i < DIMENSION_SUDOKU; i++) {
+            for (int j = 0; j < DIMENSION_SUDOKU; j++) {
                 tableroElegido[i][j] = BANCO_SUDOKUS[indice][i][j];
             }
         }
@@ -811,9 +867,48 @@ public class Main {
         return tableroElegido;
     }
     
+    private boolean verificarCoordenadaValidaSudoku(String entrada) {
+
+        char[] letras = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'};
+
+        for (int f = 0; f < DIMENSION_SUDOKU; f++) {
+            for (int c = 0; c < DIMENSION_SUDOKU; c++) {
+
+                String coordSinEspacio = "" + letras[f] + (c + 1);
+                String coordConEspacio = "" + letras[f] + " " + (c + 1);
+
+                if (coordSinEspacio.equals(entrada) || coordConEspacio.equals(entrada)) {
+                    
+                    if (esCasillaFija[f][c]) {
+                        mostrarMensajeError("coordenada inválida. Es una casilla fija ._.");
+                        return false;
+                    } else {
+                        filaSeleccionada = f;
+                        columnaSeleccionada = c;
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        mostrarMensajeError("coordenada con formato inválido D:");
+        return false;
+    }
+    
+    private boolean verificarEntradaSudoku(int entradaACasilla) {
+        
+        if (entradaACasilla >= 1 && entradaACasilla <= 9) {
+            procesarJugadaUsuarioSudoku(filaSeleccionada, columnaSeleccionada, entradaACasilla);
+        }
+        
+        mostrarMensajeError("tiene que ser un número que no se repita en fila y columna :p");        
+        return false;
+    }
+    
     private boolean validarReglasSudoku(int fila, int columna, int numero) {
         
-        for (int posicionAEvaluar = 0; posicionAEvaluar < 9; posicionAEvaluar++) {
+        for (int posicionAEvaluar = 0; posicionAEvaluar < DIMENSION_SUDOKU; posicionAEvaluar++) {
+            
             if ((posicionAEvaluar != columna && tableroJuegoSudoku[fila][posicionAEvaluar] == numero) ||
                     (posicionAEvaluar != fila && tableroJuegoSudoku[posicionAEvaluar][columna] == numero)) {
                 return false;
@@ -831,18 +926,36 @@ public class Main {
                 }
             }
         }
+        
+        cantidadJugadasTotalesSudoku = cantidadJugadasTotalesSudoku + 1;
 
         return true;
     }
     
-    private void procesarJugadaUsuario(int fila, int columna, int numero) {
+    private void procesarJugadaUsuarioSudoku(int fila, int columna, int numero) {
+        
+        tableroJuegoSudoku[fila][columna] = numero;
+
+        boolean cumpleReglas = validarReglasSudoku(fila, columna, numero);
+        boolean esCorrectoSolucion = (numero == tableroJuegoSudoku[fila][columna]);
+
+        if (cumpleReglas && esCorrectoSolucion) {
+            tableroSudoku[fila][columna] = ANSI_NEGRITA + ANSI_AZUL + "[  " + numero + "  ]" + ANSI_RESET;
+        } else {
+            
+            tableroSudoku[fila][columna] = ANSI_NEGRITA + ANSI_ROJO + "[  " + numero + "  ]" + ANSI_RESET;
+            jugadasInvalidasSudoku = jugadasInvalidasSudoku + 1;
+            
+            System.out.println(ANSI_ROJO + "Advertencia: el número es infringe las reglas del Sudoku xd" + ANSI_RESET);
+            presionarENTER();
+        }
         
     }
     
-    private boolean verificarVictoria() {
+    private boolean verificarVictoriaSudoku() {
         
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
+        for (int i = 0; i < DIMENSION_SUDOKU; i++) {
+            for (int j = 0; j < DIMENSION_SUDOKU; j++) {
                 
                 if (tableroJuegoSudoku[i][j] != tableroSolucionSudoku[i][j]) {
                     return false;
@@ -853,6 +966,133 @@ public class Main {
         return true;
     }
     //------------------------------------------
+    
+    //============================================
+    //============ MÉTODOS - REPORTES ============
+    //============================================
+    public void mostrarReportes() {
+        
+        if (cantidadPartidasGanadasAA == 0) {
+            cantidadPartidasGanadasAA = 1;
+        }
+        
+        if (cantidadPartidasGanadasTTT == 0) {
+            cantidadPartidasGanadasTTT = 1;
+        }
+        
+        if (cantidadPartidasGanadasSudoku == 0) {
+            cantidadPartidasGanadasSudoku = 1;
+        }
+        
+        if (jugadasTotalesTTT == 0) {
+            jugadasTotalesTTT = 1;
+        }
+        
+        if (jugadasInvalidasSudoku == 0) {
+            jugadasInvalidasSudoku = 1;
+        }
+        
+        limpiarPantalla();
+        
+        mostrarTituloReportes();
+        
+        String barraAA = barraPorcentajeVictorias(cantidadPartidasJugadasAA, cantidadPartidasGanadasAA);
+        mostrarTituloAA();
+        
+        System.out.println(ANSI_NEGRITA + ANSI_VERDE + "                             PORCENTAJE DE VICTORIAS" + ANSI_RESET);
+        System.out.println("                          " + barraAA + " " + (cantidadPartidasJugadasAA + cantidadPartidasGanadasAA) + "%");
+        System.out.println(ANSI_NEGRITA + ANSI_MORADO + "CANTIDAD DE PARTIDAS ABANDONADAS: " + ANSI_AZUL + cantidadPartidasAbandonadasAA + ANSI_RESET);
+        System.out.println(ANSI_NEGRITA + ANSI_VERDE + "CANTIDAD DE PARTIDAS JUGADAS: " + ANSI_CYAN + cantidadPartidasJugadasAA + ANSI_RESET);
+        System.out.println(ANSI_NEGRITA + ANSI_MORADO + "CANTIDAD DE PALABRAS ADIVINIDAS: " + ANSI_AZUL + cantidadPalabrasAcertadasAA + ANSI_RESET);
+        System.out.println(ANSI_NEGRITA + ANSI_VERDE + "CANTIDAD DE INTENTOS FALLIDOS: " + ANSI_CYAN + cantidadPalabrasFallidasAA + ANSI_RESET);
+        System.out.println();
+        
+        String barraTTT = barraPorcentajeVictorias(cantidadPartidasJugadasTTT, cantidadPartidasGanadasTTT);
+        mostrarTituloTTT();
+        
+        System.out.println(ANSI_NEGRITA + ANSI_AZUL + "                             PORCENTAJE DE VICTORIAS" + ANSI_RESET);
+        System.out.println("                          " + barraTTT + " " + (cantidadPartidasJugadasTTT + cantidadPartidasGanadasTTT) + "%");
+        System.out.println(ANSI_NEGRITA + ANSI_ROJO + "CANTIDAD DE PARTIDAS ABANDONADAS: " + ANSI_CYAN + cantidadPartidasGanadasSudoku + ANSI_RESET);
+        System.out.println(ANSI_NEGRITA + ANSI_AZUL + "CANTIDAD DE PARTIDAS GANADAS POR EL JUGADOR: " + ANSI_AZUL + cantidadPartidasGanadasSudoku + ANSI_RESET);
+        System.out.println(ANSI_NEGRITA + ANSI_ROJO + "CANTIDAD DE PARTIDAS GANADAS POR LA COMPUTADORA: " + ANSI_CYAN + cantidadVictoriasComputadoraTTT + ANSI_RESET);
+        System.out.println(ANSI_NEGRITA + ANSI_AZUL + "CANTIDAD DE PARTIDAS EMPATADAS: " + ANSI_AZUL + cantidadPartidasEmpatadasTTT + ANSI_RESET);
+        System.out.println(ANSI_NEGRITA + ANSI_ROJO + "RACHA ACTUAL DE VICTORIAS: " + ANSI_CYAN + cantidadVictoriasComputadoraTTT + ANSI_RESET);
+        System.out.println(ANSI_NEGRITA + ANSI_AZUL + "RACHA ACTUAL DE DERROTAS: " + ANSI_AZUL + cantidadPartidasEmpatadasTTT + ANSI_RESET);
+        System.out.println(ANSI_NEGRITA + ANSI_ROJO + "PROMEDIO DE JUGADAS POR PARTIDA: " + ANSI_CYAN + (cantidadPartidasJugadasTTT / jugadasTotalesTTT) + ANSI_RESET);
+        System.out.println();
+        
+        String barraSudoku = barraPorcentajeVictorias(cantidadPartidasJugadasSudoku, cantidadPartidasGanadasSudoku);
+        mostrarTituloSudoku();
+        
+        System.out.println(ANSI_NEGRITA + ANSI_VERDE + "                             PORCENTAJE DE VICTORIAS" + ANSI_RESET);
+        System.out.println("                          " + barraSudoku + " " + (cantidadPartidasJugadasSudoku + cantidadPartidasGanadasSudoku) + "%");
+        System.out.println(ANSI_NEGRITA + ANSI_MORADO + "CANTIDAD DE PARTIDAS ABANDONADAS: " + ANSI_AZUL + cantidadPartidasAbandonadasSudoku + ANSI_RESET);
+        System.out.println(ANSI_NEGRITA + ANSI_VERDE + "CANTIDAD DE PARTIDAS JUGADAS: " + ANSI_CYAN + cantidadPartidasJugadasSudoku + ANSI_RESET);
+        System.out.println(ANSI_NEGRITA + ANSI_MORADO + "PROMEDIO DE JUGADAS INVÁLIDAS: " + ANSI_AZUL + (cantidadJugadasTotalesSudoku / jugadasInvalidasSudoku) + ANSI_RESET);
+        System.out.println();
+        
+        System.out.println(ANSI_NEGRITA
+                + ANSI_AMARILLO + "=================="
+                + ANSI_BLANCO + "Presiona ENTER para volver al menú principal"
+                + ANSI_AMARILLO + "=================="
+                + ANSI_RESET);
+        scanner.nextLine();
+    }
+    
+    private void mostrarTituloReportes() {
+        System.out.println(ANSI_NEGRITA + 
+                "================================================================================\n" +
+                "       ██████╗ ███████╗██████╗  ██████╗ ██████╗ ████████╗███████╗███████╗\n" +
+                "       ██╔══██╗██╔════╝██╔══██╗██╔═══██╗██╔══██╗╚══██╔══╝██╔════╝██╔════╝\n" +
+                "       ██████╔╝█████╗  ██████╔╝██║   ██║██████╔╝   ██║   █████╗  ███████╗\n" +
+                "       ██╔══██╗██╔══╝  ██╔═══╝ ██║   ██║██╔══██╗   ██║   ██╔══╝  ╚════██║\n" +
+                "       ██║  ██║███████╗██║     ╚██████╔╝██║  ██║   ██║   ███████╗███████║\n" +
+                "       ╚═╝  ╚═╝╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝╚══════╝\n" + 
+                "================================================================================\n" +
+                ANSI_RESET);
+    }
+    
+    private void mostrarTituloAA() {
+        System.out.println(ANSI_MORADO + 
+                "                 ╔═╗╔╦╗╦╦  ╦╦╔╗╔╔═╗  ╔═╗╔╗╔╔═╗╔═╗╦═╗╔═╗╔╦╗╔═╗╔═╗\n" +
+                "                 ╠═╣ ║║║╚╗╔╝║║║║╠═╣  ╠═╣║║║╠═╣║ ╦╠╦╝╠═╣║║║╠═╣╚═╗\n" +
+                "                 ╩ ╩═╩╝╩ ╚╝ ╩╝╚╝╩ ╩  ╩ ╩╝╚╝╩ ╩╚═╝╩╚═╩ ╩╩ ╩╩ ╩╚═╝" + 
+                ANSI_RESET);
+    }
+    
+    private void mostrarTituloTTT() {
+        System.out.println(ANSI_ROJO + 
+                "                              ╔╦╗╦╔═╗  ╔╦╗╔═╗╔═╗  ╔╦╗╔═╗╔═╗\n" +
+                "                               ║ ║║     ║ ╠═╣║     ║ ║ ║║╣ \n" +
+                "                               ╩ ╩╚═╝   ╩ ╩ ╩╚═╝   ╩ ╚═╝╚═╝" + 
+                ANSI_RESET);
+    }
+    
+    private void mostrarTituloSudoku() {
+        System.out.println(ANSI_MORADO + 
+                "                              ╔═╗╦ ╦╔╦╗╔═╗╦╔═╦ ╦\n" +
+                "                              ╚═╗║ ║ ║║║ ║╠╩╗║ ║\n" +
+                "                              ╚═╝╚═╝═╩╝╚═╝╩ ╩╚═╝" + 
+                ANSI_RESET);
+    }
+    
+    private String barraPorcentajeVictorias(int partidasJugadas, int victorias) {
+        
+        int longitud = 24;
+        int barraPorcentaje = (partidasJugadas * longitud) / victorias;
+        
+        String barra = "";
+        
+        for (int i = 0; i < barraPorcentaje; i++) {
+            barra = barra + "■";
+        }
+        for (int i = 0; i < longitud; i++) {
+            barra = barra + ".";
+        }
+        
+        return barra;
+    }
+    //--------------------------------------------
     
     
     
@@ -881,7 +1121,14 @@ public class Main {
         
         mostrarPedirOpcion();
         
-        System.out.println(ANSI_AMARILLO + "(Entradas válidas: 1 - 5) " + ANSI_RESET);
+        System.out.println(ANSI_NEGRITA + ANSI_VERDE + 
+                "                        Ingrese la opción que deseas :D " +
+                ANSI_RESET);
+        System.out.println(ANSI_AMARILLO + 
+                "                /==============================================\\\n" +
+                "                ||Entradas válidas: solo un número del 1 al 5 ||\n" +
+                "                \\==============================================/) " 
+                + ANSI_RESET);
         System.out.print(ANSI_NEGRITA + "» " + ANSI_RESET);
         opcion = Integer.valueOf(scanner.nextLine());
         
@@ -896,7 +1143,7 @@ public class Main {
                 ANSI_AMARILLO + "=========================" + 
                 ANSI_RESET);
         scanner.nextLine();
-    }    
+    }
     //--------------------------------------------
     
     
@@ -1028,6 +1275,13 @@ public class Main {
                 ANSI_RESET;
         
         System.out.println("\n" + pedirOpcion);
+    }
+    
+    //******************************************
+    //************ Mensaje de error ************
+    //******************************************
+    private void mostrarMensajeError(String mensaje) {
+        System.out.println(ANSI_NEGRITA + ANSI_ROJO + "Error: " + ANSI_BLANCO + mensaje + ANSI_RESET);
     }
     
     //****************************************************************
@@ -1226,7 +1480,11 @@ public class Main {
     
     private String pedirEntradaAnagrama() {
         
-        System.out.println(ANSI_AMARILLO + "(Entradas válidas: (A-Z) sin 'ñ', espacios, símbolos y números)" + ANSI_RESET);
+        System.out.println(ANSI_NEGRITA + ANSI_VERDE + "                         Ingrese el intendo de anagrama" + ANSI_RESET);
+        System.out.println(ANSI_AMARILLO + 
+                "   /========================================================================\\\n" +
+                "   ||Entradas válidas: palabras (A-Z) sin 'ñ', espacios, símbolos y números||\n" +
+                "   \\========================================================================/" + ANSI_RESET);
         System.out.print(ANSI_NEGRITA + "» " + ANSI_RESET);
         
         return scanner.nextLine().trim().toUpperCase();
@@ -1331,7 +1589,12 @@ public class Main {
     
     private String pedirCoordenadaTTT() {
         
-        System.out.println("Entradas válidas: coordenadas como se ven en pantalla. Ejemplos: A 1, B 2, C 3");
+        System.out.println(ANSI_NEGRITA + ANSI_VERDE + "                    Ingrese la casilla para colocar la ficha" + ANSI_RESET);
+        System.out.println(ANSI_AMARILLO + 
+                " /============================================================================\\\n" +
+                " ||Entradas válidas: coordenadas como se ven en pantalla. Ejemplos: A 1, B 2 ||\n" +
+                " \\============================================================================/" + 
+                ANSI_RESET);
         System.out.print(ANSI_NEGRITA + "» " + ANSI_RESET);
 
         return scanner.nextLine().trim().toUpperCase();
@@ -1345,22 +1608,146 @@ public class Main {
     //********************************
     private void llenarTableroConCoordenadasSudoku() {
         
+        char[] letras = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'};
+        
+        for (int i = 0; i < DIMENSION_SUDOKU; i++) {
+            for (int j = 0; j < DIMENSION_SUDOKU; j++) {
+                
+                tableroJuegoSudoku[i][j] = 0;
+                
+                esCasillaFija[i][j] = false;
+                
+                tableroSudoku[i][j] = "[ " + letras[i] + " " + (j + 1) + " ]";
+                
+            }
+        }
+        
     }
 
-    private void generarPistasAleatorias(int cantidadPistas) {
+    private void generarPistasAleatoriasSudoku(int cantidadPistas) {
+        
+        int contador = 0;
+        int fila;
+        int columna;
+        
+        while (contador < cantidadPistas) {            
+            
+            fila = random.nextInt(DIMENSION_SUDOKU);
+            columna = random.nextInt(DIMENSION_SUDOKU);
+            
+            if (esCasillaFija[fila][columna] == false) {
+                
+                esCasillaFija[fila][columna] = true;
+                
+                tableroJuegoSudoku[fila][columna] = tableroSolucionSudoku[fila][columna]; 
+                
+                tableroSudoku[fila][columna] = ANSI_NEGRITA + ANSI_VERDE +
+                        "[  " + tableroSolucionSudoku[fila][columna] + "  ]" +
+                        ANSI_RESET;
+                
+                contador = contador + 1;
+            }
+            
+        }
         
     }
 
     private void mostrarReglasSudoku() {
         
+        String reglas = ANSI_NEGRITA + ANSI_AMARILLO +
+                "================================================================================\n" +
+                "            ░█▀▄░█▀▀░█▀▀░█░░░█▀█░█▀▀░░░░░░░░░█▀▀░█░█░█▀▄░█▀█░█░█░█░█\n" +
+                "            ░█▀▄░█▀▀░█░█░█░░░█▀█░▀▀█░░░▄▄▄░░░▀▀█░█░█░█░█░█░█░█▀▄░█░█\n" +
+                "            ░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░░░░░░░░░▀▀▀░▀▀▀░▀▀░░▀▀▀░▀░▀░▀▀▀\n" + 
+                "================================================================================\n\n" +
+                ANSI_CYAN +
+                "1. OBJETIVO: Rellena el tablero de 9x9 de modo que cada fila, columna\n" +
+                "   y caja de 3x3 contenga todos los números del 1 al 9 sin repetir.\n\n" +
+                ANSI_VERDE +
+                "2. COORDENADAS: Ingresa la coordenada que ves en la casilla, por ejemplo: A 1.\n" +
+                "   Las casillas con números iniciales en Blanco Fijo NO se pueden cambiar.\n\n" + 
+                ANSI_CYAN + 
+                "3. COLORES: Los números correctos ingresados se mostrarán en " + ANSI_AZUL + "AZUL" + ANSI_CYAN + ",\n" +
+                "   mientras que los incorrectos o conflictivos se mostrarán en " + ANSI_ROJO + "ROJO" + ANSI_CYAN + ".\n\n" +
+                ANSI_VERDE +
+                "4. COMANDO DE SALIDA: Puedes escribir SALIR en cualquier momento si deseas\n" +
+                "   abandonar la partida y volver al menú principal.\n\n" +
+                ANSI_RESET;
+        
+        System.out.println(reglas);
+        presionarENTER();
     }
     
     private void mostrarTableroSudoku() {
         
+        mostrarComandoMenu();
+        
+        String tablero = ANSI_NEGRITA + ANSI_MORADO +
+                "           ████████╗ █████╗ ██████╗ ██╗     ███████╗██████╗  ██████╗ \n" +
+                "           ╚══██╔══╝██╔══██╗██╔══██╗██║     ██╔════╝██╔══██╗██╔═══██╗\n" +
+                "              ██║   ███████║██████╔╝██║     █████╗  ██████╔╝██║   ██║\n" +
+                "              ██║   ██╔══██║██╔══██╗██║     ██╔══╝  ██╔══██╗██║   ██║\n" +
+                "              ██║   ██║  ██║██████╔╝███████╗███████╗██║  ██║╚██████╔╝\n" +
+                "              ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ \n\n" +
+                ANSI_AZUL +
+                "               ███████╗██╗   ██╗██████╗  ██████╗ ██╗  ██╗██╗   ██╗   \n" +
+                "               ██╔════╝██║   ██║██╔══██╗██╔═══██╗██║ ██╔╝██║   ██║   \n" +
+                "               ███████╗██║   ██║██║  ██║██║   ██║█████╔╝ ██║   ██║   \n" +
+                "               ╚════██║██║   ██║██║  ██║██║   ██║██╔═██╗ ██║   ██║   \n" +
+                "               ███████║╚██████╔╝██████╔╝╚██████╔╝██║  ██╗╚██████╔╝   \n" +
+                "               ╚══════╝ ╚═════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝    \n" +
+                ANSI_RESET;
+        
+        System.out.println(tablero);
+        
+        System.out.println(ANSI_NEGRITA + ANSI_AMARILLO + "================================================================================" + ANSI_RESET);
+
+        for (int i = 0; i < 9; i++) {
+            
+            System.out.print("   ");
+            
+            for (int j = 0; j < 9; j++) {
+                
+                System.out.print(tableroSudoku[i][j]);
+
+                if (j == 2 || j == 5) {
+                    System.out.print(ANSI_NEGRITA + ANSI_AMARILLO + " ║ " + ANSI_RESET);
+                } else if (j < 8) {
+                    System.out.print(" ");
+                }
+            }
+            System.out.println();
+
+            if (i == 2 || i == 5) {
+                System.out.println(ANSI_NEGRITA + ANSI_AMARILLO + "   ════════════════════════╬═════════════════════════╬════════════════════════" + ANSI_RESET);
+            }
+        }
+        
+        System.out.println(ANSI_NEGRITA + ANSI_AMARILLO + "================================================================================\n" + ANSI_RESET);
     }
     
-    private void pedirCoordenadaSudoku() {
+    private String pedirCoordenadaSudoku() {
         
+        System.out.println(ANSI_NEGRITA + ANSI_VERDE + "                  Ingrese la coordenada de casilla a modificar" + ANSI_RESET);
+        System.out.println(ANSI_AMARILLO + 
+                "            /======================================================\\\n" +
+                "            ||Entradas válidas: letra y número. Ejemplo: A 1 o A1 ||\n" +
+                "            \\======================================================/" + ANSI_RESET);
+        System.out.print(ANSI_NEGRITA + "» " + ANSI_RESET);
+        
+        return scanner.nextLine().trim().toUpperCase();
+    }
+    
+    private String pedirNumeroSudoku() {
+        
+        System.out.println(ANSI_NEGRITA + ANSI_VERDE + "                    Ingrese el número a colocar en la casilla");
+        System.out.println(ANSI_AMARILLO +
+                "                /==============================================\\\n" +
+                "                ||Entradas válidas: solo un número del 1 al 9 ||\n" +
+                "                \\==============================================/" + ANSI_RESET);
+        System.out.print(ANSI_NEGRITA + "» " + ANSI_RESET);
+        
+        return scanner.nextLine().trim();
     }
     //-------------------------------------
 }
